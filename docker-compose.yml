@@ -1,0 +1,18 @@
+version: '3.7'
+services:
+  database:
+    image: postgres
+    container_name: trabalholp3_reciclagem
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=dockerpostgres
+      - POSTGRES_PASSWORD=postgrespass
+      - POSTGRES_DB=reciclagem
+    volumes:
+      - pgdata:/data/postgres
+
+volumes:
+  pgdata:
+    driver: local

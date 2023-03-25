@@ -35,7 +35,7 @@ public class CadastrarUsuarioPanel {
     private final CadastrarUsuarioControle controle;
 
     public CadastrarUsuarioPanel() {
-        controle = new CadastrarUsuarioControle();
+        controle = CadastrarUsuarioControle.getInstancia();
 
         formattedTextFieldCep.addKeyListener(new KeyAdapter() {
             @Override

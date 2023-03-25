@@ -26,8 +26,12 @@ public class CadastrarUsuarioRepository implements ICadastrarUsuarioRepository {
             preparedStatement.setString(5, clienteDao.getLogradouro());
             preparedStatement.setString(6, clienteDao.getBairro());
             preparedStatement.setString(7, clienteDao.getEstado());
+            Integer statusQuery = preparedStatement.executeUpdate();
 
-            return preparedStatement.executeUpdate();
+            preparedStatement.close();
+            conexao.close();
+
+            return statusQuery;
 
         } catch (SQLException e) {
             throw new RuntimeException(e);

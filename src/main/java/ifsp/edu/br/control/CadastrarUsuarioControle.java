@@ -11,10 +11,20 @@ import java.util.regex.Pattern;
 
 public class CadastrarUsuarioControle {
 
+    private static CadastrarUsuarioControle instancia;
+
     private final CadastrarUsuarioModelo modelo;
 
-    public CadastrarUsuarioControle() {
-        modelo = new CadastrarUsuarioModelo();
+    private CadastrarUsuarioControle() {
+        modelo = CadastrarUsuarioModelo.getInstancia();
+    }
+
+    public static CadastrarUsuarioControle getInstancia() {
+        if (instancia == null) {
+            instancia = new CadastrarUsuarioControle();
+        }
+
+        return instancia;
     }
 
     public InformacoesCepDto buscarInformacoesCep(Object cep) throws BuscarInformacoesCepException {

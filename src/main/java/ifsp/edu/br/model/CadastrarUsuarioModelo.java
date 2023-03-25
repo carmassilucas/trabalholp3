@@ -15,10 +15,20 @@ import ifsp.edu.br.model.repostitory.implementation.CadastrarUsuarioRepository;
 
 public class CadastrarUsuarioModelo {
 
+    private static CadastrarUsuarioModelo instancia;
+
     public ICadastrarUsuarioRepository cadastrarUsuarioRepository;
 
-    public CadastrarUsuarioModelo() {
+    private CadastrarUsuarioModelo() {
         cadastrarUsuarioRepository = new CadastrarUsuarioRepository();
+    }
+
+    public static CadastrarUsuarioModelo getInstancia() {
+        if (instancia == null) {
+            instancia = new CadastrarUsuarioModelo();
+        }
+
+        return instancia;
     }
 
     public InformacoesCepDto buscarInformacoesCep(String cep) {

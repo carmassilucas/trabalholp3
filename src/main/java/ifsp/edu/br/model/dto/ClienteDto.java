@@ -10,7 +10,7 @@ import java.util.UUID;
 @AllArgsConstructor()
 public @Data class ClienteDto {
 
-    private String nome, email, localidade, logradouro, bairro, estado;
+    private String nome, email, senha, localidade, logradouro, bairro, estado;
     private Object cep;
 
     public Boolean verificaCampos() {
@@ -35,6 +35,7 @@ public @Data class ClienteDto {
                 UUID.randomUUID(),
                 this.getNome(),
                 this.getEmail(),
+                this.getSenha(),
                 this.getCep().toString(),
                 this.getLocalidade(),
                 this.getLogradouro(),

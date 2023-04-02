@@ -23,15 +23,16 @@ public class CadastrarUsuarioRepository implements ICadastrarUsuarioRepository {
             }
 
             PreparedStatement preparedStatement = conexao.prepareStatement(
-            "INSERT INTO cliente VALUES ('" + clienteDao.getId() + "', ?, ?, ?, ?, ?, ?, ?);"
+            "INSERT INTO cliente VALUES ('" + clienteDao.getId() + "', ?, ?, ?, ?, ?, ?, ?, ?);"
             );
             preparedStatement.setString(1, clienteDao.getNome());
             preparedStatement.setString(2, clienteDao.getEmail());
-            preparedStatement.setString(3, clienteDao.getCep());
-            preparedStatement.setString(4, clienteDao.getLocalidade());
-            preparedStatement.setString(5, clienteDao.getLogradouro());
-            preparedStatement.setString(6, clienteDao.getBairro());
-            preparedStatement.setString(7, clienteDao.getEstado());
+            preparedStatement.setString(3, clienteDao.getSenha());
+            preparedStatement.setString(4, clienteDao.getCep());
+            preparedStatement.setString(5, clienteDao.getLocalidade());
+            preparedStatement.setString(6, clienteDao.getLogradouro());
+            preparedStatement.setString(7, clienteDao.getBairro());
+            preparedStatement.setString(8, clienteDao.getEstado());
             Integer statusQuery = preparedStatement.executeUpdate();
 
             preparedStatement.close();
@@ -59,6 +60,7 @@ public class CadastrarUsuarioRepository implements ICadastrarUsuarioRepository {
                         UUID.fromString(rs.getString("id")),
                         rs.getString("nome"),
                         rs.getString("email"),
+                        rs.getString("senha"),
                         rs.getString("cep"),
                         rs.getString("cidade"),
                         rs.getString("logradouro"),

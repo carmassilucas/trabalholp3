@@ -6,6 +6,7 @@ import ifsp.edu.br.control.exception.CadastrarClienteException;
 import ifsp.edu.br.model.dto.ClienteDto;
 import ifsp.edu.br.model.dto.InformacoesCepDto;
 import ifsp.edu.br.model.exception.EmailDuplicadoException;
+import ifsp.edu.br.model.util.MessageDigestUtil;
 
 import javax.swing.*;
 import javax.swing.text.MaskFormatter;
@@ -13,7 +14,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
+import java.util.Arrays;
 
 public class CadastrarUsuarioPanel {
     private JPanel panelConteudo;
@@ -32,6 +37,8 @@ public class CadastrarUsuarioPanel {
     private JLabel labelBairro;
     private JLabel labelEstado;
     private JTextField textFieldUf;
+    private JLabel labelSenha;
+    private JPasswordField passwordFieldSenha;
 
     private final CadastrarUsuarioControle controle;
 
@@ -73,13 +80,7 @@ public class CadastrarUsuarioPanel {
         try {
             informacoesCepDto = controle.buscarInformacoesCep(cep);
         } catch (BuscarInformacoesCepException e) {
-            JOptionPane.showMessageDialog(
-                    this.panelConteudo,
-                    e.getMessage(),
-                    "Houve um engano",
-                    JOptionPane.ERROR_MESSAGE
-            );
-
+            JOptionPane.showMessageDialog(this.panelConteudo, e.getMessage(), "Houve um engano", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -108,6 +109,7 @@ public class CadastrarUsuarioPanel {
             Integer statusCadastro = controle.cadastrarCliente(new ClienteDto(
                     textFieldNome.getText(),
                     textFieldEmail.getText(),
+                    MessageDigestUtil.hashSenha(Arrays.toString(passwordFieldSenha.getPassword())),
                     textFieldLocalidade.getText(),
                     textFieldLogradouro.getText(),
                     textFieldBairro.getText(),
@@ -134,24 +136,17 @@ public class CadastrarUsuarioPanel {
             );
 
             limparCampos();
-
+            setEnabledContextoCepTextFields(false);
+            setEditableContextoCepTextFields(false);
         } catch (CadastrarClienteException e) {
-            JOptionPane.showMessageDialog(
-                    this.panelConteudo,
-                    e.getMessage(),
-                    "Erro ao cadastrar-se",
-                    JOptionPane.ERROR_MESSAGE
-            );
+            JOptionPane.showMessageDialog(this.panelConteudo, e.getMessage(), "Erro ao cadastrar-se", JOptionPane.ERROR_MESSAGE);
         } catch (EmailDuplicadoException e) {
-            JOptionPane.showMessageDialog(
-                    this.panelConteudo,
-                    e.getMessage(),
-                    "Erro ao cadastrar-se",
-                    JOptionPane.ERROR_MESSAGE
-            );
+            JOptionPane.showMessageDialog(this.panelConteudo, e.getMessage(), "Erro ao cadastrar-se", JOptionPane.ERROR_MESSAGE);
 
             textFieldEmail.requestFocus();
             textFieldEmail.selectAll();
+        } catch (NoSuchAlgorithmException e) {
+            JOptionPane.showMessageDialog(this.panelConteudo, e.getMessage(), "Erro ao aplicar proteção hash à senha", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -179,6 +174,7 @@ public class CadastrarUsuarioPanel {
     public void limparCampos() {
         textFieldNome.setText("");
         textFieldEmail.setText("");
+        passwordFieldSenha.setText("");
         textFieldLogradouro.setText("");
         textFieldUf.setText("");
         textFieldBairro.setText("");

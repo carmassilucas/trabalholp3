@@ -5,6 +5,7 @@ import ifsp.edu.br.control.exception.CadastrarClienteException;
 import ifsp.edu.br.model.CadastrarUsuarioModelo;
 import ifsp.edu.br.model.dto.ClienteDto;
 import ifsp.edu.br.model.dto.InformacoesCepDto;
+import ifsp.edu.br.model.exception.EmailDuplicadoException;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -35,7 +36,7 @@ public class CadastrarUsuarioControle {
         return modelo.buscarInformacoesCep(cep.toString());
     }
 
-    public Integer cadastrarCliente(ClienteDto clienteDto) throws CadastrarClienteException {
+    public Integer cadastrarCliente(ClienteDto clienteDto) throws CadastrarClienteException, EmailDuplicadoException {
         if (!clienteDto.verificaCampos()) {
             throw new CadastrarClienteException("Preencha todos os campos para se cadastrar");
         }

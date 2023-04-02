@@ -5,6 +5,7 @@ import ifsp.edu.br.control.exception.BuscarInformacoesCepException;
 import ifsp.edu.br.control.exception.CadastrarClienteException;
 import ifsp.edu.br.model.dto.ClienteDto;
 import ifsp.edu.br.model.dto.InformacoesCepDto;
+import ifsp.edu.br.model.exception.EmailDuplicadoException;
 
 import javax.swing.*;
 import javax.swing.text.MaskFormatter;
@@ -141,6 +142,16 @@ public class CadastrarUsuarioPanel {
                     "Erro ao cadastrar-se",
                     JOptionPane.ERROR_MESSAGE
             );
+        } catch (EmailDuplicadoException e) {
+            JOptionPane.showMessageDialog(
+                    this.panelConteudo,
+                    e.getMessage(),
+                    "Erro ao cadastrar-se",
+                    JOptionPane.ERROR_MESSAGE
+            );
+
+            textFieldEmail.requestFocus();
+            textFieldEmail.selectAll();
         }
     }
 

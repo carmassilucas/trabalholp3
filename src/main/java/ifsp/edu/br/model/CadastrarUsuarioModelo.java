@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import ifsp.edu.br.model.dao.ClienteDao;
 import ifsp.edu.br.model.dto.ClienteDto;
 import ifsp.edu.br.model.dto.InformacoesCepDto;
+import ifsp.edu.br.model.exception.EmailDuplicadoException;
 import ifsp.edu.br.model.repostitory.ICadastrarUsuarioRepository;
 import ifsp.edu.br.model.repostitory.implementation.CadastrarUsuarioRepository;
 
@@ -48,9 +49,7 @@ public class CadastrarUsuarioModelo {
         return null;
     }
 
-    public Integer cadastrarCliente(ClienteDto clienteDto) {
-        ClienteDao clienteDao = clienteDto.toDao();
-
-        return cadastrarUsuarioRepository.cadastrarUsuario(clienteDao);
+    public Integer cadastrarCliente(ClienteDto clienteDto) throws EmailDuplicadoException {
+        return cadastrarUsuarioRepository.cadastrarUsuario(clienteDto.toDao());
     }
 }

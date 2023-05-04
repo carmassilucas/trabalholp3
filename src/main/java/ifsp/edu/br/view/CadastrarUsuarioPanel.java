@@ -3,8 +3,9 @@ package ifsp.edu.br.view;
 import ifsp.edu.br.control.CadastrarUsuarioControle;
 import ifsp.edu.br.control.exception.BuscarInformacoesCepException;
 import ifsp.edu.br.control.exception.CadastrarClienteException;
-import ifsp.edu.br.model.dto.ClienteDto;
+import ifsp.edu.br.model.dto.CadastrarClienteDto;
 import ifsp.edu.br.model.dto.InformacoesCepDto;
+import ifsp.edu.br.model.exception.CadastrarEnderecoException;
 import ifsp.edu.br.model.exception.EmailDuplicadoException;
 import ifsp.edu.br.model.util.MessageDigestUtil;
 
@@ -14,8 +15,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
 import java.util.Arrays;
@@ -26,7 +25,7 @@ public class CadastrarUsuarioPanel {
     private JTextField textFieldEmail;
     private JTextField textFieldLogradouro;
     private JFormattedTextField formattedTextFieldCep;
-    private JTextField textFieldLocalidade;
+    private JTextField textFieldNumero;
     private JLabel labelNome;
     private JLabel labelEmail;
     private JLabel labelLogradouro;
@@ -36,9 +35,12 @@ public class CadastrarUsuarioPanel {
     private JTextField textFieldBairro;
     private JLabel labelBairro;
     private JLabel labelEstado;
-    private JTextField textFieldUf;
+    private JTextField textFieldEstado;
     private JLabel labelSenha;
     private JPasswordField passwordFieldSenha;
+    private JLabel labelNúmero;
+    private JTextField textFieldCidade;
+    private JButton buttonBuscarDadosCep;
 
     private final CadastrarUsuarioControle controle;
 
@@ -62,6 +64,12 @@ public class CadastrarUsuarioPanel {
                 cadastrarCliente();
             }
         });
+        buttonBuscarDadosCep.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                buscarInformacoesCep();
+            }
+        });
     }
 
     private void createUIComponents() {
@@ -80,65 +88,47 @@ public class CadastrarUsuarioPanel {
         try {
             informacoesCepDto = controle.buscarInformacoesCep(cep);
         } catch (BuscarInformacoesCepException e) {
-            JOptionPane.showMessageDialog(this.panelConteudo, e.getMessage(), "Houve um engano", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this.panelConteudo, e.getMessage(), "Houve um engano", JOptionPane.WARNING_MESSAGE);
+            formattedTextFieldCep.requestFocus();
             return;
         }
 
         if (informacoesCepDto == null) {
-            setTextContextoCepTextFields(new InformacoesCepDto());
-            setEnabledContextoCepTextFields(true);
-            setEditableContextoCepTextFields(true);
-
             JOptionPane.showMessageDialog(
                     this.panelConteudo,
-                    "Não conseguimos encontrar informações sobre seu cep. Fique a vontade para tentar novamente ou inserir manualmente",
+                    "Não conseguimos encontrar informações sobre seu cep, tente novamente",
                     "Cep não encontrado",
                     JOptionPane.ERROR_MESSAGE
             );
-
+            limparCamposEndereco();
             return;
         }
-
-        setTextContextoCepTextFields(informacoesCepDto);
-        setEnabledContextoCepTextFields(true);
-        setEditableContextoCepTextFields(false);
+        setDadosCepTextFields(informacoesCepDto);
     }
 
     public void cadastrarCliente() {
         try {
-            Integer statusCadastro = controle.cadastrarCliente(new ClienteDto(
-                    textFieldNome.getText(),
-                    textFieldEmail.getText(),
-                    MessageDigestUtil.hashSenha(Arrays.toString(passwordFieldSenha.getPassword())),
-                    textFieldLocalidade.getText(),
-                    textFieldLogradouro.getText(),
-                    textFieldBairro.getText(),
-                    textFieldUf.getText(),
-                    formattedTextFieldCep.getValue()
+            controle.cadastrarCliente(new CadastrarClienteDto(
+                textFieldNome.getText(),
+                textFieldEmail.getText(),
+                MessageDigestUtil.hashSenha(Arrays.toString(passwordFieldSenha.getPassword())),
+                textFieldCidade.getText(),
+                textFieldLogradouro.getText(),
+                textFieldBairro.getText(),
+                textFieldEstado.getText(),
+                Integer.parseInt(textFieldNumero.getText()),
+                formattedTextFieldCep.getValue()
             ));
 
-            if (statusCadastro != 1) {
-                JOptionPane.showMessageDialog(
-                        this.panelConteudo,
-                        "Erro inesperado ao se cadastrar, tente novamente",
-                        "Erro ao cadastrar-se",
-                        JOptionPane.ERROR_MESSAGE
-                );
-
-                return;
-            }
-
             JOptionPane.showMessageDialog(
-                    this.panelConteudo,
-                    "Cadastro realizado com sucesso",
-                    "Cadastro realizado",
-                    JOptionPane.INFORMATION_MESSAGE
+                this.panelConteudo,
+                "Cadastro realizado com sucesso",
+                "Cadastro realizado",
+                JOptionPane.INFORMATION_MESSAGE
             );
 
-            limparCampos();
-            setEnabledContextoCepTextFields(false);
-            setEditableContextoCepTextFields(false);
-        } catch (CadastrarClienteException e) {
+            limparCamposCliente();
+        } catch (CadastrarClienteException | CadastrarEnderecoException e) {
             JOptionPane.showMessageDialog(this.panelConteudo, e.getMessage(), "Erro ao cadastrar-se", JOptionPane.ERROR_MESSAGE);
         } catch (EmailDuplicadoException e) {
             JOptionPane.showMessageDialog(this.panelConteudo, e.getMessage(), "Erro ao cadastrar-se", JOptionPane.ERROR_MESSAGE);
@@ -146,41 +136,36 @@ public class CadastrarUsuarioPanel {
             textFieldEmail.requestFocus();
             textFieldEmail.selectAll();
         } catch (NoSuchAlgorithmException e) {
-            JOptionPane.showMessageDialog(this.panelConteudo, e.getMessage(), "Erro ao aplicar proteção hash à senha", JOptionPane.ERROR_MESSAGE);
+            System.err.println("Erro ao aplicar hash à senha: " + e);
+            System.exit(0);
         }
     }
 
-    public void setTextContextoCepTextFields(InformacoesCepDto informacoesCepDto) {
+    public void setDadosCepTextFields(InformacoesCepDto informacoesCepDto) {
+        limparCamposEndereco();
+        formattedTextFieldCep.setText(informacoesCepDto.getCep());
         textFieldLogradouro.setText(informacoesCepDto.getLogradouro());
-        textFieldUf.setText(informacoesCepDto.getUf());
+        textFieldEstado.setText(informacoesCepDto.getUf());
         textFieldBairro.setText(informacoesCepDto.getBairro());
-        textFieldLocalidade.setText(informacoesCepDto.getLocalidade());
+        textFieldCidade.setText(informacoesCepDto.getLocalidade());
+        textFieldNumero.setEditable(true);
+        textFieldNumero.requestFocus();
     }
 
-    public void setEnabledContextoCepTextFields(Boolean status) {
-        textFieldLogradouro.setEnabled(status);
-        textFieldUf.setEnabled(status);
-        textFieldBairro.setEnabled(status);
-        textFieldLocalidade.setEnabled(status);
+    public void limparCamposEndereco() {
+        formattedTextFieldCep.setValue("");
+        textFieldLogradouro.setText("");
+        textFieldBairro.setText("");
+        textFieldNumero.setText("");
+        textFieldCidade.setText("");
+        textFieldEstado.setText("");
     }
 
-    public void setEditableContextoCepTextFields(Boolean status) {
-        textFieldLogradouro.setEditable(status);
-        textFieldUf.setEditable(status);
-        textFieldBairro.setEditable(status);
-        textFieldLocalidade.setEditable(status);
-    }
-
-    public void limparCampos() {
+    public void limparCamposCliente() {
         textFieldNome.setText("");
         textFieldEmail.setText("");
         passwordFieldSenha.setText("");
-        textFieldLogradouro.setText("");
-        textFieldUf.setText("");
-        textFieldBairro.setText("");
-        textFieldLocalidade.setText("");
-        formattedTextFieldCep.setValue("");
-
+        limparCamposEndereco();
         textFieldNome.requestFocus();
     }
 

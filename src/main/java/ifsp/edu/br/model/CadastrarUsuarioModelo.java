@@ -7,21 +7,28 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import ifsp.edu.br.model.dao.ClienteDao;
-import ifsp.edu.br.model.dto.ClienteDto;
+import ifsp.edu.br.control.exception.CadastrarClienteException;
+import ifsp.edu.br.model.dao.IEnderecoDao;
+import ifsp.edu.br.model.dao.implementation.EnderecoDao;
+import ifsp.edu.br.model.dto.CadastrarClienteDto;
 import ifsp.edu.br.model.dto.InformacoesCepDto;
+import ifsp.edu.br.model.exception.CadastrarEnderecoException;
 import ifsp.edu.br.model.exception.EmailDuplicadoException;
-import ifsp.edu.br.model.repostitory.ICadastrarUsuarioRepository;
-import ifsp.edu.br.model.repostitory.implementation.CadastrarUsuarioRepository;
+import ifsp.edu.br.model.dao.IUsuarioDao;
+import ifsp.edu.br.model.dao.implementation.UsuarioDao;
+import ifsp.edu.br.model.vo.ClienteVo;
+import ifsp.edu.br.model.vo.EnderecoVo;
 
 public class CadastrarUsuarioModelo {
 
     private static CadastrarUsuarioModelo instancia;
 
-    public ICadastrarUsuarioRepository cadastrarUsuarioRepository;
+    public IUsuarioDao usuarioDao;
+    public IEnderecoDao enderecoDao;
 
     private CadastrarUsuarioModelo() {
-        cadastrarUsuarioRepository = new CadastrarUsuarioRepository();
+        usuarioDao = new UsuarioDao();
+        enderecoDao = new EnderecoDao();
     }
 
     public static CadastrarUsuarioModelo getInstancia() {
@@ -49,7 +56,12 @@ public class CadastrarUsuarioModelo {
         return null;
     }
 
-    public Integer cadastrarCliente(ClienteDto clienteDto) throws EmailDuplicadoException {
-        return cadastrarUsuarioRepository.cadastrarUsuario(clienteDto.toDao());
+    public void cadastrarCliente(CadastrarClienteDto cadastrarClienteDto) throws EmailDuplicadoException,
+            CadastrarClienteException, CadastrarEnderecoException {
+        if(usuarioDao.buscarUsuarioByEmail(cadastrarClienteDto.getEmail()) != null) {
+            throw new EmailDuplicadoException("Endereço de e-mail já cadastrado.");
+        }
+        ClienteVo clienteVo = usuarioDao.cadastrarUsuario(ClienteVo.toVo(cadastrarClienteDto));
+        enderecoDao.cadastrarEndereco(EnderecoVo.toVo(cadastrarClienteDto), clienteVo.getId());
     }
 }

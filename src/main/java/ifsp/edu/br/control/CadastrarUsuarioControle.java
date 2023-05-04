@@ -3,8 +3,9 @@ package ifsp.edu.br.control;
 import ifsp.edu.br.control.exception.BuscarInformacoesCepException;
 import ifsp.edu.br.control.exception.CadastrarClienteException;
 import ifsp.edu.br.model.CadastrarUsuarioModelo;
-import ifsp.edu.br.model.dto.ClienteDto;
+import ifsp.edu.br.model.dto.CadastrarClienteDto;
 import ifsp.edu.br.model.dto.InformacoesCepDto;
+import ifsp.edu.br.model.exception.CadastrarEnderecoException;
 import ifsp.edu.br.model.exception.EmailDuplicadoException;
 
 import java.util.regex.Matcher;
@@ -30,22 +31,21 @@ public class CadastrarUsuarioControle {
 
     public InformacoesCepDto buscarInformacoesCep(Object cep) throws BuscarInformacoesCepException {
         if (cep == null) {
-            throw new BuscarInformacoesCepException("CEP deve ser informado");
+            throw new BuscarInformacoesCepException("Por favor, informe o seu cep");
         }
 
         return modelo.buscarInformacoesCep(cep.toString());
     }
 
-    public Integer cadastrarCliente(ClienteDto clienteDto) throws CadastrarClienteException, EmailDuplicadoException {
-        if (!clienteDto.verificaCampos()) {
+    public void cadastrarCliente(CadastrarClienteDto cadastrarClienteDto) throws CadastrarClienteException,
+            EmailDuplicadoException, CadastrarEnderecoException {
+        if (!cadastrarClienteDto.verificaCampos()) {
             throw new CadastrarClienteException("Preencha todos os campos para se cadastrar");
         }
-
-        if (!validarEmail(clienteDto.getEmail())) {
+        if (!validarEmail(cadastrarClienteDto.getEmail())) {
             throw new CadastrarClienteException("E-mail inválido");
         }
-
-        return modelo.cadastrarCliente(clienteDto);
+        modelo.cadastrarCliente(cadastrarClienteDto);
     }
 
     public static boolean validarEmail(String email) {

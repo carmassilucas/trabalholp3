@@ -1,16 +1,15 @@
 package ifsp.edu.br.model.dto;
 
-import ifsp.edu.br.model.dao.ClienteDao;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.lang.reflect.Field;
-import java.util.UUID;
 
 @AllArgsConstructor()
-public @Data class ClienteDto {
+public @Data class CadastrarClienteDto {
 
     private String nome, email, senha, localidade, logradouro, bairro, estado;
+    private Integer numero;
     private Object cep;
 
     public Boolean verificaCampos() {
@@ -18,7 +17,6 @@ public @Data class ClienteDto {
 
         for (Field campo : campos) {
             campo.setAccessible(true);
-
             try {
                 if (campo.get(this) == null) {
                     return false;
@@ -28,19 +26,5 @@ public @Data class ClienteDto {
             }
         }
         return true;
-    }
-
-    public ClienteDao toDao() {
-        return new ClienteDao(
-                UUID.randomUUID(),
-                this.getNome(),
-                this.getEmail(),
-                this.getSenha(),
-                this.getCep().toString(),
-                this.getLocalidade(),
-                this.getLogradouro(),
-                this.getBairro(),
-                this.getEstado()
-        );
     }
 }

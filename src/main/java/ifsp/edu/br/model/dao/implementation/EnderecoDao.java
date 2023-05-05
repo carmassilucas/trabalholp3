@@ -39,8 +39,7 @@ public class EnderecoDao implements IEnderecoDao {
                 throw new CadastrarEnderecoException("Erro inesperado ao cadastrar endereco");
             }
 
-            preparedStatement.close();
-            conexao.close();
+            ConexaoFactory.closeConnection(conexao, preparedStatement);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -71,6 +70,7 @@ public class EnderecoDao implements IEnderecoDao {
 
                 );
             }
+            ConexaoFactory.closeConnection(conexao, preparedStatement, rs);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -91,8 +91,7 @@ public class EnderecoDao implements IEnderecoDao {
                 throw new CadastrarEnderecoException("Erro inesperado ao relacionar cliente e endereço.");
             }
 
-            preparedStatement.close();
-            conexao.close();
+            ConexaoFactory.closeConnection(conexao, preparedStatement);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

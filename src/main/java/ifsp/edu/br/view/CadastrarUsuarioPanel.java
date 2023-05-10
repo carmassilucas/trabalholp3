@@ -117,7 +117,7 @@ public class CadastrarUsuarioPanel {
                 textFieldBairro.getText(),
                 textFieldEstado.getText(),
                 Integer.parseInt(textFieldNumero.getText()),
-                formattedTextFieldCep.getValue()
+                formattedTextFieldCep.getText()
             ));
 
             JOptionPane.showMessageDialog(

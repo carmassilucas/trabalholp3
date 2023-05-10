@@ -30,9 +30,7 @@ public class UsuarioDao implements IUsuarioDao {
                 throw new CadastrarClienteException("Erro inesperado ao cadastrar cliente");
             }
 
-            preparedStatement.close();
-            conexao.close();
-
+            ConexaoFactory.closeConnection(conexao, preparedStatement);
             return cliente;
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -45,24 +43,26 @@ public class UsuarioDao implements IUsuarioDao {
 
         PreparedStatement preparedStatement = null;
         try {
+            ClienteVo c = null;
             preparedStatement = conexao.prepareStatement("SELECT * FROM cliente WHERE email = ? LIMIT 1;");
             preparedStatement.setString(1, email);
 
             ResultSet rs = preparedStatement.executeQuery();
 
             while(rs.next()) {
-                return new ClienteVo(
+                 c = new ClienteVo(
                         UUID.fromString(rs.getString("id")),
                         rs.getString("nome"),
                         rs.getString("email"),
                         rs.getString("senha"),
                         null
                 );
+                 break;
             }
+            ConexaoFactory.closeConnection(conexao, preparedStatement, rs);
+            return c;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
-        return null;
     }
 }

@@ -19,8 +19,8 @@ create table cliente_endereco(
 	id_endereco uuid not null
 );
 alter table cliente_endereco add constraint fk_id_cliente foreign key(id_cliente) references cliente(id);
-alter table cliente_enderecoadd constraint fk_id_endereco foreign key(id_endereco) references endereco(id);
-alter table cliente_enderecoadd constraint pk_id_cliente_endereco primary key(id_cliente, id_endereco);
+alter table cliente_endereco add constraint fk_id_endereco foreign key(id_endereco) references endereco(id);
+alter table cliente_endereco add constraint pk_id_cliente_endereco primary key(id_cliente, id_endereco);
 create table reciclagem(
 	id uuid not null,
 	id_endereco uuid not null,

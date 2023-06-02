@@ -13,14 +13,13 @@ import java.util.UUID;
 
 public class EnderecoDao implements IEnderecoDao {
     @Override
-    public void cadastrarEndereco(EnderecoVo endereco, UUID idCliente) throws CadastrarEnderecoException {
+    public EnderecoVo cadastrarEndereco(EnderecoVo endereco) throws CadastrarEnderecoException {
         Connection conexao = ConexaoFactory.getConexao();
 
         EnderecoVo enderecoCadastrado = buscarEnderecoByCepAndNumero(endereco.getCep(), endereco.getNumero());
 
         if(enderecoCadastrado != null) {
-            relacionarClienteEndereco(idCliente, enderecoCadastrado.getId());
-            return;
+            return enderecoCadastrado;
         }
 
         try {
@@ -40,10 +39,10 @@ public class EnderecoDao implements IEnderecoDao {
             }
 
             ConexaoFactory.closeConnection(conexao, preparedStatement);
+            return endereco;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        relacionarClienteEndereco(idCliente, endereco.getId());
     }
 
     @Override
@@ -80,7 +79,6 @@ public class EnderecoDao implements IEnderecoDao {
     @Override
     public void relacionarClienteEndereco(UUID idCliente, UUID idEndereco) throws CadastrarEnderecoException {
         Connection conexao = ConexaoFactory.getConexao();
-
         try {
             PreparedStatement preparedStatement = conexao.prepareStatement(
                     "INSERT INTO cliente_endereco VALUES ('" + idCliente + "', '" + idEndereco + "');"

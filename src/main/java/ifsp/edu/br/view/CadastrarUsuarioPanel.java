@@ -1,5 +1,6 @@
 package ifsp.edu.br.view;
 
+import ifsp.edu.br.control.BuscarDadosCepControle;
 import ifsp.edu.br.control.CadastrarUsuarioControle;
 import ifsp.edu.br.control.exception.BuscarInformacoesCepException;
 import ifsp.edu.br.control.exception.CadastrarClienteException;
@@ -33,28 +34,30 @@ public class CadastrarUsuarioPanel {
     private JLabel labelCidade;
     private JButton buttonCadastrar;
     private JTextField textFieldBairro;
-    private JLabel labelBairro;
+    private JLabel labelNumero;
     private JLabel labelEstado;
     private JTextField textFieldEstado;
     private JLabel labelSenha;
     private JPasswordField passwordFieldSenha;
-    private JLabel labelNúmero;
+    private JLabel labelBairro;
     private JTextField textFieldCidade;
     private JButton buttonBuscarDadosCep;
 
     private final CadastrarUsuarioControle controle;
+    private final BuscarDadosCepControle buscarDadosCepControle;
 
     public CadastrarUsuarioPanel() {
         controle = CadastrarUsuarioControle.getInstancia();
+        buscarDadosCepControle = BuscarDadosCepControle.getInstancia();
 
         formattedTextFieldCep.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
-                super.keyReleased(e);
+            super.keyReleased(e);
 
-                if (e.getKeyCode() == 10) {
-                    buscarInformacoesCep();
-                }
+            if (e.getKeyCode() == 10) {
+                buscarInformacoesCep();
+            }
             }
         });
 
@@ -86,7 +89,7 @@ public class CadastrarUsuarioPanel {
         InformacoesCepDto informacoesCepDto;
 
         try {
-            informacoesCepDto = controle.buscarInformacoesCep(cep);
+            informacoesCepDto = buscarDadosCepControle.buscarInformacoesCep(cep);
         } catch (BuscarInformacoesCepException e) {
             JOptionPane.showMessageDialog(this.panelConteudo, e.getMessage(), "Houve um engano", JOptionPane.WARNING_MESSAGE);
             formattedTextFieldCep.requestFocus();
@@ -111,13 +114,13 @@ public class CadastrarUsuarioPanel {
             controle.cadastrarCliente(new CadastrarClienteDto(
                 textFieldNome.getText(),
                 textFieldEmail.getText(),
-                MessageDigestUtil.hashSenha(Arrays.toString(passwordFieldSenha.getPassword())),
+                passwordFieldSenha.getText(),
                 textFieldCidade.getText(),
                 textFieldLogradouro.getText(),
                 textFieldBairro.getText(),
                 textFieldEstado.getText(),
-                Integer.parseInt(textFieldNumero.getText()),
-                formattedTextFieldCep.getText()
+                textFieldNumero.getText(),
+                formattedTextFieldCep.getValue()
             ));
 
             JOptionPane.showMessageDialog(
@@ -136,8 +139,7 @@ public class CadastrarUsuarioPanel {
             textFieldEmail.requestFocus();
             textFieldEmail.selectAll();
         } catch (NoSuchAlgorithmException e) {
-            System.err.println("Erro ao aplicar hash à senha: " + e);
-            System.exit(0);
+            throw new RuntimeException(e);
         }
     }
 

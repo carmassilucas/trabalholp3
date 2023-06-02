@@ -7,24 +7,24 @@ import java.lang.reflect.Field;
 
 @AllArgsConstructor()
 public @Data class CadastrarClienteDto {
-
-    private String nome, email, senha, localidade, logradouro, bairro, estado;
-    private Integer numero;
+    private String nome, email, senha, localidade, logradouro, bairro, estado, numero;
     private Object cep;
 
     public Boolean verificaCampos() {
-        Field[] campos = getClass().getDeclaredFields();
-
-        for (Field campo : campos) {
-            campo.setAccessible(true);
+        for (Field field : getClass().getDeclaredFields()) {
+            field.setAccessible(true);
             try {
-                if (campo.get(this) == null) {
-                    return false;
+                Object value = field.get(this);
+                if (value == null) {
+                    return true;
+                }
+                if (value instanceof String && ((String) value).isEmpty()) {
+                    return true;
                 }
             } catch (IllegalAccessException e) {
-                System.err.println(e.getMessage());
+                throw new RuntimeException(e);
             }
         }
-        return true;
+        return false;
     }
 }

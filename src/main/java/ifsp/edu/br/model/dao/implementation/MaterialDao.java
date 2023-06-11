@@ -36,7 +36,7 @@ public class MaterialDao implements IMaterialDao {
         Connection conexao = ConexaoFactory.getConexao();
         try {
             PreparedStatement preparedStatement = conexao.prepareStatement(
-                    "SELECT * FROM material WHERE nome = ? LIMIT 1;"
+                    "SELECT * FROM material WHERE nome ILIKE ? LIMIT 1;"
             );
             preparedStatement.setString(1, nome);
             ResultSet rs = preparedStatement.executeQuery();

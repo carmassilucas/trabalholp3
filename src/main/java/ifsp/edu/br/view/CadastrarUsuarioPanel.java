@@ -8,7 +8,6 @@ import ifsp.edu.br.model.dto.CadastrarClienteDto;
 import ifsp.edu.br.model.dto.InformacoesCepDto;
 import ifsp.edu.br.model.exception.CadastrarEnderecoException;
 import ifsp.edu.br.model.exception.EmailDuplicadoException;
-import ifsp.edu.br.model.util.MessageDigestUtil;
 
 import javax.swing.*;
 import javax.swing.text.MaskFormatter;
@@ -18,7 +17,6 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
-import java.util.Arrays;
 
 public class CadastrarUsuarioPanel {
     private JPanel panelConteudo;

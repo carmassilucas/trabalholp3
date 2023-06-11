@@ -8,7 +8,7 @@ import ifsp.edu.br.model.dao.implementation.UsuarioDao;
 import ifsp.edu.br.model.dto.CadastrarClienteDto;
 import ifsp.edu.br.model.exception.CadastrarEnderecoException;
 import ifsp.edu.br.model.exception.EmailDuplicadoException;
-import ifsp.edu.br.model.util.MessageDigestUtil;
+import ifsp.edu.br.model.util.MessageDigestUtils;
 import ifsp.edu.br.model.vo.ClienteVo;
 import ifsp.edu.br.model.vo.EnderecoVo;
 
@@ -37,7 +37,7 @@ public class CadastrarUsuarioModelo {
             throw new EmailDuplicadoException("Endereço de e-mail já cadastrado.");
         }
 
-        cadastrarClienteDto.setSenha(MessageDigestUtil.hashSenha(cadastrarClienteDto.getSenha()));
+        cadastrarClienteDto.setSenha(MessageDigestUtils.hashSenha(cadastrarClienteDto.getSenha()));
         ClienteVo clienteVo = usuarioDao.cadastrarUsuario(ClienteVo.toVo(cadastrarClienteDto));
 
         EnderecoVo enderecoVo = enderecoDao.cadastrarEndereco(EnderecoVo.toVo(cadastrarClienteDto));

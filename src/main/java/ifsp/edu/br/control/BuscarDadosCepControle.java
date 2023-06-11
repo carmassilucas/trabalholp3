@@ -5,9 +5,7 @@ import ifsp.edu.br.model.BuscarDadosCepModelo;
 import ifsp.edu.br.model.dto.InformacoesCepDto;
 
 public class BuscarDadosCepControle {
-
     private static BuscarDadosCepControle instancia;
-
     private BuscarDadosCepModelo modelo;
 
     private BuscarDadosCepControle() {
@@ -15,17 +13,14 @@ public class BuscarDadosCepControle {
     }
 
     public static BuscarDadosCepControle getInstancia() {
-        if (instancia == null) {
+        if (instancia == null)
             instancia = new BuscarDadosCepControle();
-        }
         return instancia;
     }
 
     public InformacoesCepDto buscarInformacoesCep(Object cep) throws BuscarInformacoesCepException {
-        if (cep == null) {
+        if (cep == null)
             throw new BuscarInformacoesCepException("Por favor, informe o seu cep");
-        }
-
         return modelo.buscarInformacoesCep(cep.toString());
     }
 }

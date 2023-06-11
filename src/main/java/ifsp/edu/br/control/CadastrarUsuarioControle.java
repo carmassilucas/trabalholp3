@@ -5,6 +5,7 @@ import ifsp.edu.br.model.CadastrarUsuarioModelo;
 import ifsp.edu.br.model.dto.CadastrarClienteDto;
 import ifsp.edu.br.model.exception.CadastrarEnderecoException;
 import ifsp.edu.br.model.exception.EmailDuplicadoException;
+import ifsp.edu.br.model.util.DtoUtils;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.regex.Matcher;
@@ -14,26 +15,22 @@ public class CadastrarUsuarioControle {
     private static CadastrarUsuarioControle instancia;
     private final CadastrarUsuarioModelo cadastrarClienteModelo;
 
-
     private CadastrarUsuarioControle() {
         cadastrarClienteModelo = CadastrarUsuarioModelo.getInstancia();
     }
 
     public static CadastrarUsuarioControle getInstancia() {
-        if (instancia == null) {
+        if (instancia == null)
             instancia = new CadastrarUsuarioControle();
-        }
         return instancia;
     }
 
     public void cadastrarCliente(CadastrarClienteDto cadastrarClienteDto) throws CadastrarClienteException,
             EmailDuplicadoException, CadastrarEnderecoException, NoSuchAlgorithmException {
-        if (cadastrarClienteDto.verificaCampos()) {
+        if (DtoUtils.verificaSeAtributoNullOrEmpty(cadastrarClienteDto))
             throw new CadastrarClienteException("Preencha todos os campos para se cadastrar");
-        }
-        if (!validarEmail(cadastrarClienteDto.getEmail())) {
+        if (!validarEmail(cadastrarClienteDto.getEmail()))
             throw new CadastrarClienteException("E-mail inválido");
-        }
         cadastrarClienteModelo.cadastrarCliente(cadastrarClienteDto);
     }
 

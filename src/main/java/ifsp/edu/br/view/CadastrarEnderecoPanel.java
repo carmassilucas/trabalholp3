@@ -115,7 +115,12 @@ public class CadastrarEnderecoPanel {
             );
             limparCamposEndereco();
         } catch (CadastrarEnderecoException | ifsp.edu.br.model.exception.CadastrarEnderecoException e) {
-            throw new RuntimeException(e);
+            JOptionPane.showMessageDialog(
+                    panelConteudo,
+                    e.getMessage(),
+                    "Erro ao cadastrar material",
+                    JOptionPane.ERROR_MESSAGE
+            );
         }
     }
 

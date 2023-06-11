@@ -3,6 +3,7 @@ package ifsp.edu.br.control;
 import ifsp.edu.br.control.exception.CadastrarMaterialException;
 import ifsp.edu.br.model.MaterialModelo;
 import ifsp.edu.br.model.dto.CadastrarMaterialDto;
+import ifsp.edu.br.model.util.DtoUtils;
 import ifsp.edu.br.model.vo.MaterialVo;
 
 import java.util.List;
@@ -26,7 +27,7 @@ public class MaterialControle {
 
     public void cadastrarMaterial(CadastrarMaterialDto cadastrarMaterialDto) throws CadastrarMaterialException,
             ifsp.edu.br.model.exception.CadastrarMaterialException {
-        if (cadastrarMaterialDto.verificaCampos())
+        if (DtoUtils.verificaSeAtributoNullOrEmpty(cadastrarMaterialDto))
             throw new CadastrarMaterialException("Preencha todos os campos para cadastrar o material");
         materialModelo.cadastrarMaterial(cadastrarMaterialDto);
     }

@@ -20,7 +20,7 @@ public class CadastrarEnderecoControle {
 
     public void cadastrarEndereco(CadastrarEnderecoDto cadastrarEnderecoDto) throws CadastrarEnderecoException, ifsp.edu.br.model.exception.CadastrarEnderecoException {
         if (!cadastrarEnderecoDto.verificaCampos()) {
-            throw new CadastrarEnderecoException("Preencha todos os campos para se cadastrar");
+            throw new CadastrarEnderecoException("Preencha todos os campos para cadastrar o endereço");
         }
         cadastrarEnderecoModelo.cadastrarEndereco(cadastrarEnderecoDto);
     }

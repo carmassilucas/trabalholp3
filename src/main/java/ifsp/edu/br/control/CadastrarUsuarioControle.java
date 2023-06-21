@@ -3,11 +3,9 @@ package ifsp.edu.br.control;
 import ifsp.edu.br.control.exception.CadastrarClienteException;
 import ifsp.edu.br.model.CadastrarUsuarioModelo;
 import ifsp.edu.br.model.dto.CadastrarClienteDto;
-import ifsp.edu.br.model.exception.CadastrarEnderecoException;
 import ifsp.edu.br.model.exception.EmailDuplicadoException;
 import ifsp.edu.br.model.util.DtoUtils;
 
-import java.security.NoSuchAlgorithmException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -26,7 +24,7 @@ public class CadastrarUsuarioControle {
     }
 
     public void cadastrarCliente(CadastrarClienteDto cadastrarClienteDto) throws CadastrarClienteException,
-            EmailDuplicadoException, CadastrarEnderecoException, NoSuchAlgorithmException {
+            EmailDuplicadoException {
         if (DtoUtils.verificaSeAtributoNullOrEmpty(cadastrarClienteDto))
             throw new CadastrarClienteException("Preencha todos os campos para se cadastrar");
         if (!validarEmail(cadastrarClienteDto.getEmail()))

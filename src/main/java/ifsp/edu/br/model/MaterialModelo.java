@@ -2,16 +2,16 @@ package ifsp.edu.br.model;
 
 import ifsp.edu.br.model.dao.implementation.MaterialDao;
 import ifsp.edu.br.model.dto.CadastrarMaterialDto;
-import ifsp.edu.br.model.exception.CadastrarMaterialException;
+import ifsp.edu.br.model.exception.MaterialDuplicadoException;
 import ifsp.edu.br.model.vo.MaterialVo;
 
 import java.util.List;
 
 public class MaterialModelo {
     private static MaterialModelo instacia;
-    private MaterialDao materialDao;
+    private final MaterialDao materialDao;
     private MaterialModelo() {
-        materialDao = new MaterialDao();
+        materialDao = MaterialDao.getInstancia();
     }
 
     public static MaterialModelo getInstacia() {
@@ -24,9 +24,9 @@ public class MaterialModelo {
         return materialDao.buscarMateriais();
     }
 
-    public void cadastrarMaterial(CadastrarMaterialDto cadastrarMaterialDto) throws CadastrarMaterialException {
+    public void cadastrarMaterial(CadastrarMaterialDto cadastrarMaterialDto) throws MaterialDuplicadoException {
         if (materialDao.buscarMaterialByNome(cadastrarMaterialDto.getNome()) != null)
-            throw new CadastrarMaterialException("Material já cadastrado");
+            throw new MaterialDuplicadoException("Material já cadastrado");
         materialDao.cadastrarMaterial(MaterialVo.toVo(cadastrarMaterialDto));
     }
 

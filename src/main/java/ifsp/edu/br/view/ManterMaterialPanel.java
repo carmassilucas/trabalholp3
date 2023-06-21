@@ -3,6 +3,7 @@ package ifsp.edu.br.view;
 import ifsp.edu.br.control.MaterialControle;
 import ifsp.edu.br.control.exception.CadastrarMaterialException;
 import ifsp.edu.br.model.dto.CadastrarMaterialDto;
+import ifsp.edu.br.model.exception.MaterialDuplicadoException;
 import ifsp.edu.br.model.vo.MaterialVo;
 
 import javax.swing.*;
@@ -79,7 +80,7 @@ public class ManterMaterialPanel {
 
             limparCampos();
             carregarTabela();
-        } catch (CadastrarMaterialException | ifsp.edu.br.model.exception.CadastrarMaterialException e) {
+        } catch (CadastrarMaterialException | MaterialDuplicadoException e) {
             JOptionPane.showMessageDialog(
                     panelConteudo,
                     e.getMessage(),
@@ -146,6 +147,7 @@ public class ManterMaterialPanel {
                     0).toString());
             textFieldNome.setText(material.getNome());
             textAreaDescricao.setText(material.getDescricao());
+            cadastrarButton.setEnabled(false);
         }
     }
 
@@ -170,7 +172,11 @@ public class ManterMaterialPanel {
         textFieldNome.setText("");
         textAreaDescricao.setText("");
         textFieldNome.requestFocus();
-        tableMateriais.removeRowSelectionInterval(tableMateriais.getSelectedRow(), 0);
+
+        if (tableMateriais.getSelectedRow() != -1)
+            tableMateriais.removeRowSelectionInterval(tableMateriais.getSelectedRow(), 0);
+
+        cadastrarButton.setEnabled(true);
     }
 
     public static void main(String[] args) {

@@ -2,6 +2,7 @@ package ifsp.edu.br.model.vo;
 
 import ifsp.edu.br.model.dto.CadastrarClienteDto;
 import ifsp.edu.br.model.dto.CadastrarEnderecoDto;
+import ifsp.edu.br.model.dto.CadastrarReciclagemDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -13,6 +14,11 @@ public @Data class EnderecoVo {
     private String cep, cidade, logradouro, bairro, uf;
     private Integer numero;
 
+    public EnderecoVo(UUID id) {
+        this.id = id;
+    }
+
+    // TODO: refatorar métodos toVo
     public static EnderecoVo toVo(CadastrarClienteDto cadastrarClienteDto) {
         return new EnderecoVo(
             UUID.randomUUID(),
@@ -34,6 +40,18 @@ public @Data class EnderecoVo {
             cadastrarEnderecoDto.getBairro(),
             cadastrarEnderecoDto.getEstado(),
             Integer.parseInt(cadastrarEnderecoDto.getNumero())
+        );
+    }
+
+    public static EnderecoVo toVo(CadastrarReciclagemDto cadastrarReciclagemDto) {
+        return new EnderecoVo(
+                UUID.randomUUID(),
+                cadastrarReciclagemDto.getCep().toString(),
+                cadastrarReciclagemDto.getLocalidade(),
+                cadastrarReciclagemDto.getLogradouro(),
+                cadastrarReciclagemDto.getBairro(),
+                cadastrarReciclagemDto.getEstado(),
+                Integer.parseInt(cadastrarReciclagemDto.getNumero())
         );
     }
 }

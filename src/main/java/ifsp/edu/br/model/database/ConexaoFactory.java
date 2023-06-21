@@ -15,33 +15,30 @@ public class ConexaoFactory {
         }
     }
 
-    public static void closeConnection(Connection con) {
+    public static void fecharConexao(Connection conexao) {
         try {
-            if (con != null) {
-                con.close();
-            }
+            if (conexao != null)
+                conexao.close();
         } catch (SQLException e) {
             System.err.println("Erro ao fechar conexão com banco de dados: " + e);
         }
     }
 
-    public static void closeConnection(Connection con, PreparedStatement stm) {
-        closeConnection(con);
+    public static void fecharConexao(Connection conexao, PreparedStatement stmt) {
+        fecharConexao(conexao);
         try {
-            if (stm != null) {
-                stm.close();
-            }
+            if (stmt != null)
+                stmt.close();
         } catch (SQLException e) {
             System.err.println("Erro ao fechar conexão com banco de dados: " + e);
         }
     }
 
-    public static void closeConnection(Connection con, PreparedStatement stm, ResultSet rs) {
-        closeConnection(con, stm);
+    public static void fecharConexao(Connection conexao, PreparedStatement stmt, ResultSet rs) {
+        fecharConexao(conexao, stmt);
         try {
-            if (rs != null) {
+            if (rs != null)
                 rs.close();
-            }
         } catch (SQLException e) {
             System.err.println("Erro ao fechar conexão com banco de dados: " + e);
         }

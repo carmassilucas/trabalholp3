@@ -1,6 +1,5 @@
 package ifsp.edu.br.model.dao.implementation;
 
-import ifsp.edu.br.control.exception.CadastrarClienteException;
 import ifsp.edu.br.model.dao.IUsuarioDao;
 import ifsp.edu.br.model.database.ConexaoFactory;
 import ifsp.edu.br.model.vo.ClienteVo;
@@ -12,9 +11,20 @@ import java.sql.SQLException;
 import java.util.UUID;
 
 public class UsuarioDao implements IUsuarioDao {
+    private static UsuarioDao instancia;
+
+    private UsuarioDao() {
+
+    }
+
+    public static UsuarioDao getInstancia() {
+        if (instancia == null)
+            instancia = new UsuarioDao();
+        return instancia;
+    }
 
     @Override
-    public ClienteVo cadastrarUsuario(ClienteVo cliente) throws CadastrarClienteException {
+    public ClienteVo cadastrarUsuario(ClienteVo cliente) {
         Connection conexao = ConexaoFactory.getConexao();
 
         try {
@@ -24,13 +34,9 @@ public class UsuarioDao implements IUsuarioDao {
             preparedStatement.setString(1, cliente.getNome());
             preparedStatement.setString(2, cliente.getEmail());
             preparedStatement.setString(3, cliente.getSenha());
-            var statusQuery = preparedStatement.executeUpdate();
+            preparedStatement.executeUpdate();
 
-            if(statusQuery != 1) {
-                throw new CadastrarClienteException("Erro inesperado ao cadastrar cliente");
-            }
-
-            ConexaoFactory.closeConnection(conexao, preparedStatement);
+            ConexaoFactory.fecharConexao(conexao, preparedStatement);
             return cliente;
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -59,7 +65,7 @@ public class UsuarioDao implements IUsuarioDao {
                 );
                  break;
             }
-            ConexaoFactory.closeConnection(conexao, preparedStatement, rs);
+            ConexaoFactory.fecharConexao(conexao, preparedStatement, rs);
             return c;
         } catch (Exception e) {
             throw new RuntimeException(e);

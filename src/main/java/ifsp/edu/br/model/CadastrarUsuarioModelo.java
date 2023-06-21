@@ -6,7 +6,6 @@ import ifsp.edu.br.model.dao.IUsuarioDao;
 import ifsp.edu.br.model.dao.implementation.EnderecoDao;
 import ifsp.edu.br.model.dao.implementation.UsuarioDao;
 import ifsp.edu.br.model.dto.CadastrarClienteDto;
-import ifsp.edu.br.model.exception.CadastrarEnderecoException;
 import ifsp.edu.br.model.exception.EmailDuplicadoException;
 import ifsp.edu.br.model.util.MessageDigestUtils;
 import ifsp.edu.br.model.vo.ClienteVo;
@@ -16,32 +15,33 @@ import java.security.NoSuchAlgorithmException;
 
 public class CadastrarUsuarioModelo {
     private static CadastrarUsuarioModelo instancia;
-    public IUsuarioDao usuarioDao;
-    public IEnderecoDao enderecoDao;
+    public final IUsuarioDao usuarioDao;
+    public final IEnderecoDao enderecoDao;
 
     private CadastrarUsuarioModelo() {
-        usuarioDao = new UsuarioDao();
-        enderecoDao = new EnderecoDao();
+        usuarioDao = UsuarioDao.getInstancia();
+        enderecoDao = EnderecoDao.getInstancia();
     }
 
     public static CadastrarUsuarioModelo getInstancia() {
-        if (instancia == null) {
+        if (instancia == null)
             instancia = new CadastrarUsuarioModelo();
-        }
         return instancia;
     }
 
-    public void cadastrarCliente(CadastrarClienteDto cadastrarClienteDto) throws EmailDuplicadoException,
-            CadastrarClienteException, CadastrarEnderecoException, NoSuchAlgorithmException {
-        if(usuarioDao.buscarUsuarioByEmail(cadastrarClienteDto.getEmail()) != null) {
+    public void cadastrarCliente(CadastrarClienteDto dto) throws EmailDuplicadoException,
+            CadastrarClienteException {
+        if(usuarioDao.buscarUsuarioByEmail(dto.getEmail()) != null)
             throw new EmailDuplicadoException("Endereço de e-mail já cadastrado.");
+
+        try {
+            dto.setSenha(MessageDigestUtils.hashSenha(dto.getSenha()));
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
         }
 
-        cadastrarClienteDto.setSenha(MessageDigestUtils.hashSenha(cadastrarClienteDto.getSenha()));
-        ClienteVo clienteVo = usuarioDao.cadastrarUsuario(ClienteVo.toVo(cadastrarClienteDto));
-
-        EnderecoVo enderecoVo = enderecoDao.cadastrarEndereco(EnderecoVo.toVo(cadastrarClienteDto));
-
+        ClienteVo clienteVo = usuarioDao.cadastrarUsuario(ClienteVo.toVo(dto));
+        EnderecoVo enderecoVo = enderecoDao.cadastrarEndereco(EnderecoVo.toVo(dto));
         enderecoDao.relacionarClienteEndereco(clienteVo.getId(), enderecoVo.getId());
     }
 }

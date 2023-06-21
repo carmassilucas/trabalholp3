@@ -13,8 +13,20 @@ import java.util.List;
 import java.util.UUID;
 
 public class MaterialDao implements IMaterialDao {
+    private static MaterialDao instancia;
+
+    private MaterialDao() {
+
+    }
+
+    public static MaterialDao getInstancia() {
+        if (instancia == null)
+            instancia = new MaterialDao();
+        return instancia;
+    }
+
     @Override
-    public MaterialVo cadastrarMaterial(MaterialVo material) {
+    public void cadastrarMaterial(MaterialVo material) {
         Connection conexao = ConexaoFactory.getConexao();
         try {
             PreparedStatement preparedStatement = conexao.prepareStatement(
@@ -24,8 +36,7 @@ public class MaterialDao implements IMaterialDao {
             preparedStatement.setString(2, material.getDescricao());
             preparedStatement.executeUpdate();
 
-            ConexaoFactory.closeConnection(conexao, preparedStatement);
-            return material;
+            ConexaoFactory.fecharConexao(conexao, preparedStatement);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -47,7 +58,7 @@ public class MaterialDao implements IMaterialDao {
                         rs.getString("nome"),
                         rs.getString("descricao")
                 );
-                ConexaoFactory.closeConnection(conexao, preparedStatement, rs);
+                ConexaoFactory.fecharConexao(conexao, preparedStatement, rs);
                 return material;
             }
         } catch (SQLException e) {
@@ -73,7 +84,7 @@ public class MaterialDao implements IMaterialDao {
                         rs.getString("descricao")
                 ));
             }
-            ConexaoFactory.closeConnection(conexao, preparedStatement, rs);
+            ConexaoFactory.fecharConexao(conexao, preparedStatement, rs);
             return materiais;
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -91,7 +102,7 @@ public class MaterialDao implements IMaterialDao {
             preparedStatement.setString(2, material.getDescricao());
             preparedStatement.executeUpdate();
 
-            ConexaoFactory.closeConnection(conexao, preparedStatement);
+            ConexaoFactory.fecharConexao(conexao, preparedStatement);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

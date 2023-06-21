@@ -14,9 +14,8 @@ public class BuscarDadosCepModelo {
     private BuscarDadosCepModelo() {}
 
     public static BuscarDadosCepModelo getInstancia() {
-        if (instancia == null) {
+        if (instancia == null)
             instancia = new BuscarDadosCepModelo();
-        }
         return instancia;
     }
 

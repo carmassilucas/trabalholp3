@@ -8,6 +8,7 @@ import ifsp.edu.br.model.util.DtoUtils;
 public class CadastrarEnderecoControle {
     private static CadastrarEnderecoControle instancia;
     private final CadastrarEnderecoModelo cadastrarEnderecoModelo;
+
     private CadastrarEnderecoControle() {
         cadastrarEnderecoModelo = CadastrarEnderecoModelo.getInstancia();
     }
@@ -18,10 +19,9 @@ public class CadastrarEnderecoControle {
         return instancia;
     }
 
-    public void cadastrarEndereco(CadastrarEnderecoDto cadastrarEnderecoDto) throws CadastrarEnderecoException,
-            ifsp.edu.br.model.exception.CadastrarEnderecoException {
-        if (DtoUtils.verificaSeAtributoNullOrEmpty(cadastrarEnderecoDto))
+    public void cadastrarEndereco(CadastrarEnderecoDto dto) throws CadastrarEnderecoException {
+        if (DtoUtils.verificaSeAtributoNullOrEmpty(dto))
             throw new CadastrarEnderecoException("Preencha todos os campos para cadastrar o endereço");
-        cadastrarEnderecoModelo.cadastrarEndereco(cadastrarEnderecoDto);
+        cadastrarEnderecoModelo.cadastrarEndereco(dto);
     }
 }

@@ -6,7 +6,6 @@ import ifsp.edu.br.control.exception.BuscarInformacoesCepException;
 import ifsp.edu.br.control.exception.CadastrarClienteException;
 import ifsp.edu.br.model.dto.CadastrarClienteDto;
 import ifsp.edu.br.model.dto.InformacoesCepDto;
-import ifsp.edu.br.model.exception.CadastrarEnderecoException;
 import ifsp.edu.br.model.exception.EmailDuplicadoException;
 
 import javax.swing.*;
@@ -112,7 +111,7 @@ public class CadastrarUsuarioPanel {
             controle.cadastrarCliente(new CadastrarClienteDto(
                 textFieldNome.getText(),
                 textFieldEmail.getText(),
-                passwordFieldSenha.getText(),
+                new String(passwordFieldSenha.getPassword()),
                 textFieldCidade.getText(),
                 textFieldLogradouro.getText(),
                 textFieldBairro.getText(),
@@ -129,15 +128,13 @@ public class CadastrarUsuarioPanel {
             );
 
             limparCamposCliente();
-        } catch (CadastrarClienteException | CadastrarEnderecoException e) {
+        } catch (CadastrarClienteException e) {
             JOptionPane.showMessageDialog(this.panelConteudo, e.getMessage(), "Erro ao cadastrar-se", JOptionPane.ERROR_MESSAGE);
         } catch (EmailDuplicadoException e) {
             JOptionPane.showMessageDialog(this.panelConteudo, e.getMessage(), "Erro ao cadastrar-se", JOptionPane.ERROR_MESSAGE);
 
             textFieldEmail.requestFocus();
             textFieldEmail.selectAll();
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
         }
     }
 

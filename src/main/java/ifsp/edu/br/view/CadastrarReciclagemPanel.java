@@ -1,65 +1,52 @@
 package ifsp.edu.br.view;
 
 import ifsp.edu.br.control.BuscarDadosCepControle;
-import ifsp.edu.br.control.CadastrarEnderecoControle;
+import ifsp.edu.br.control.CadastrarReciclagemControle;
 import ifsp.edu.br.control.exception.BuscarInformacoesCepException;
-import ifsp.edu.br.control.exception.CadastrarEnderecoException;
-import ifsp.edu.br.model.dto.CadastrarEnderecoDto;
+import ifsp.edu.br.control.exception.CadastrarReciclagemException;
+import ifsp.edu.br.model.dto.CadastrarReciclagemDto;
 import ifsp.edu.br.model.dto.InformacoesCepDto;
+import ifsp.edu.br.model.exception.UsuarioDuplicadoException;
 
 import javax.swing.*;
 import javax.swing.text.MaskFormatter;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.text.ParseException;
 
-public class CadastrarEnderecoPanel {
-    private JPanel panelConteudo;
-    private JTextField textFieldLogradouro;
-    private JLabel labelLogradouro;
-    private JTextField textFieldNumero;
-    private JTextField textFieldEstado;
-    private JTextField textFieldCidade;
+public class CadastrarReciclagemPanel {
+    private JTextField textFieldNome;
+    private JTextField textFieldUsuario;
+    private JPasswordField passwordFieldSenha;
     private JFormattedTextField formattedTextFieldCep;
-    private JButton buttonBuscarDadosCep;
-    private JLabel labelCep;
-    private JLabel labelNumero;
-    private JLabel labelBairro;
+    private JTextField textFieldLogradouro;
+    private JTextField textFieldNumero;
     private JTextField textFieldBairro;
-    private JLabel labelCidade;
-    private JLabel labelEstado;
-    private JButton buttonCadastrarEndereco;
-    private final BuscarDadosCepControle buscarInformacoesCepControle;
-    private final CadastrarEnderecoControle cadastrarEnderecoControle;
+    private JButton buttonBuscarDadosCep;
+    private JTextField textFieldCidade;
+    private JTextField textFieldEstado;
+    private JPanel panelConteudo;
+    private JButton buttonCadastrar;
 
-    public CadastrarEnderecoPanel() {
-        buscarInformacoesCepControle = BuscarDadosCepControle.getInstancia();
-        cadastrarEnderecoControle = CadastrarEnderecoControle.getInstancia();
+    private final CadastrarReciclagemControle cadastrarReciclagemControle;
+    private final BuscarDadosCepControle buscarDadosCepControle;
 
-        buttonBuscarDadosCep.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                buscarInformacoesCep();
-            }
-        });
+    public CadastrarReciclagemPanel() {
+        cadastrarReciclagemControle = CadastrarReciclagemControle.getInstancia();
+        buscarDadosCepControle =  BuscarDadosCepControle.getInstancia();
+
         formattedTextFieldCep.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
                 super.keyReleased(e);
 
-                if (e.getKeyCode() == 10) {
+                if (e.getKeyCode() == 10)
                     buscarInformacoesCep();
-                }
             }
         });
-        buttonCadastrarEndereco.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                cadastrarEndereco();
-            }
-        });
+
+        buttonBuscarDadosCep.addActionListener(e -> buscarInformacoesCep());
+        buttonCadastrar.addActionListener(e -> cadastrarReciclagem());
     }
 
     private void createUIComponents() {
@@ -76,7 +63,7 @@ public class CadastrarEnderecoPanel {
         InformacoesCepDto informacoesCepDto;
 
         try {
-            informacoesCepDto = buscarInformacoesCepControle.buscarInformacoesCep(cep);
+            informacoesCepDto = buscarDadosCepControle.buscarInformacoesCep(cep);
         } catch (BuscarInformacoesCepException e) {
             JOptionPane.showMessageDialog(this.panelConteudo, e.getMessage(), "Houve um engano", JOptionPane.WARNING_MESSAGE);
             formattedTextFieldCep.requestFocus();
@@ -96,15 +83,18 @@ public class CadastrarEnderecoPanel {
         setDadosCepTextFields(informacoesCepDto);
     }
 
-    public void cadastrarEndereco() {
+    private void cadastrarReciclagem() {
         try {
-            cadastrarEnderecoControle.cadastrarEndereco(new CadastrarEnderecoDto(
+            cadastrarReciclagemControle.cadastrarReciclagem(new CadastrarReciclagemDto(
+                    textFieldNome.getText(),
+                    textFieldUsuario.getText(),
+                    new String(passwordFieldSenha.getPassword()),
                     textFieldCidade.getText(),
                     textFieldLogradouro.getText(),
                     textFieldBairro.getText(),
                     textFieldEstado.getText(),
                     textFieldNumero.getText(),
-                    formattedTextFieldCep.getText()
+                    formattedTextFieldCep.getValue()
             ));
 
             JOptionPane.showMessageDialog(
@@ -113,26 +103,16 @@ public class CadastrarEnderecoPanel {
                     "Cadastro realizado",
                     JOptionPane.INFORMATION_MESSAGE
             );
-            limparCamposEndereco();
-        } catch (CadastrarEnderecoException e) {
-            JOptionPane.showMessageDialog(
-                    panelConteudo,
-                    e.getMessage(),
-                    "Erro ao cadastrar material",
-                    JOptionPane.ERROR_MESSAGE
-            );
+
+            limparCampos();
+        } catch (CadastrarReciclagemException e) {
+            JOptionPane.showMessageDialog(this.panelConteudo, e.getMessage(), "Erro ao cadastrar-se", JOptionPane.ERROR_MESSAGE);
+        } catch (UsuarioDuplicadoException e) {
+            JOptionPane.showMessageDialog(this.panelConteudo, e.getMessage(), "Erro ao cadastrar-se", JOptionPane.ERROR_MESSAGE);
+
+            textFieldUsuario.requestFocus();
+            textFieldUsuario.selectAll();
         }
-    }
-
-    public void limparCamposEndereco() {
-        formattedTextFieldCep.setValue("");
-        textFieldLogradouro.setText("");
-        textFieldBairro.setText("");
-        textFieldNumero.setText("");
-        textFieldCidade.setText("");
-        textFieldEstado.setText("");
-
-        formattedTextFieldCep.requestFocus();
     }
 
     public void setDadosCepTextFields(InformacoesCepDto informacoesCepDto) {
@@ -146,6 +126,24 @@ public class CadastrarEnderecoPanel {
         textFieldNumero.requestFocus();
     }
 
+    public void limparCamposEndereco() {
+        formattedTextFieldCep.setValue("");
+        textFieldLogradouro.setText("");
+        textFieldBairro.setText("");
+        textFieldNumero.setText("");
+        textFieldCidade.setText("");
+        textFieldEstado.setText("");
+        formattedTextFieldCep.requestFocus();
+    }
+
+    private void limparCampos() {
+        textFieldNome.setText("");
+        textFieldUsuario.setText("");
+        passwordFieldSenha.setText("");
+        limparCamposEndereco();
+        textFieldNome.requestFocus();
+    }
+
     public static void main(String[] args) {
         try {
             for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
@@ -157,8 +155,8 @@ public class CadastrarEnderecoPanel {
         } catch (UnsupportedLookAndFeelException | ClassNotFoundException | InstantiationException |
                  IllegalAccessException ignored) { }
 
-        JFrame frame = new JFrame("Cadastro de Endereço");
-        frame.setContentPane(new CadastrarEnderecoPanel().panelConteudo);
+        JFrame frame = new JFrame("Cadastro de Reciclagem");
+        frame.setContentPane(new CadastrarReciclagemPanel().panelConteudo);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setResizable(false);
         frame.pack();

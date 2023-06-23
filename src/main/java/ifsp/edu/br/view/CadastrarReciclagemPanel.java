@@ -1,7 +1,7 @@
 package ifsp.edu.br.view;
 
 import ifsp.edu.br.control.BuscarDadosCepControle;
-import ifsp.edu.br.control.CadastrarReciclagemControle;
+import ifsp.edu.br.control.ReciclagemControle;
 import ifsp.edu.br.control.exception.BuscarInformacoesCepException;
 import ifsp.edu.br.control.exception.CadastrarReciclagemException;
 import ifsp.edu.br.model.dto.CadastrarReciclagemDto;
@@ -10,8 +10,11 @@ import ifsp.edu.br.model.exception.UsuarioDuplicadoException;
 
 import javax.swing.*;
 import javax.swing.text.MaskFormatter;
+import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.text.ParseException;
 
 public class CadastrarReciclagemPanel {
@@ -27,12 +30,14 @@ public class CadastrarReciclagemPanel {
     private JTextField textFieldEstado;
     private JPanel panelConteudo;
     private JButton buttonCadastrar;
+    private JLabel labelLogin;
 
-    private final CadastrarReciclagemControle cadastrarReciclagemControle;
+    private static CadastrarReciclagemPanel instancia;
+    private final ReciclagemControle reciclagemControle;
     private final BuscarDadosCepControle buscarDadosCepControle;
 
-    public CadastrarReciclagemPanel() {
-        cadastrarReciclagemControle = CadastrarReciclagemControle.getInstancia();
+    private CadastrarReciclagemPanel() {
+        reciclagemControle = ReciclagemControle.getInstancia();
         buscarDadosCepControle =  BuscarDadosCepControle.getInstancia();
 
         formattedTextFieldCep.addKeyListener(new KeyAdapter() {
@@ -47,6 +52,29 @@ public class CadastrarReciclagemPanel {
 
         buttonBuscarDadosCep.addActionListener(e -> buscarInformacoesCep());
         buttonCadastrar.addActionListener(e -> cadastrarReciclagem());
+        labelLogin.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                super.mouseEntered(e);
+                labelLogin.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            }
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                JPanel panelConteudoProximaPagina = LoginPanel.getInstancia().getPanelConteudo();
+                GerenciadorDePaineis.getInstancia().setContentPane(panelConteudoProximaPagina);
+            }
+        });
+    }
+
+    public static CadastrarReciclagemPanel getInstancia() {
+        if (instancia == null)
+            instancia = new CadastrarReciclagemPanel();
+        return instancia;
+    }
+
+    public JPanel getPanelConteudo() {
+        return panelConteudo;
     }
 
     private void createUIComponents() {
@@ -85,7 +113,7 @@ public class CadastrarReciclagemPanel {
 
     private void cadastrarReciclagem() {
         try {
-            cadastrarReciclagemControle.cadastrarReciclagem(new CadastrarReciclagemDto(
+            reciclagemControle.cadastrarReciclagem(new CadastrarReciclagemDto(
                     textFieldNome.getText(),
                     textFieldUsuario.getText(),
                     new String(passwordFieldSenha.getPassword()),

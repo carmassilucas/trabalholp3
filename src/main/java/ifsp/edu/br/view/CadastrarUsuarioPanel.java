@@ -10,11 +10,8 @@ import ifsp.edu.br.model.exception.EmailDuplicadoException;
 
 import javax.swing.*;
 import javax.swing.text.MaskFormatter;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.security.NoSuchAlgorithmException;
+import java.awt.*;
+import java.awt.event.*;
 import java.text.ParseException;
 
 public class CadastrarUsuarioPanel {
@@ -39,11 +36,13 @@ public class CadastrarUsuarioPanel {
     private JLabel labelBairro;
     private JTextField textFieldCidade;
     private JButton buttonBuscarDadosCep;
+    private JLabel labelLogin;
 
+    private static CadastrarUsuarioPanel instancia;
     private final CadastrarUsuarioControle controle;
     private final BuscarDadosCepControle buscarDadosCepControle;
 
-    public CadastrarUsuarioPanel() {
+    private CadastrarUsuarioPanel() {
         controle = CadastrarUsuarioControle.getInstancia();
         buscarDadosCepControle = BuscarDadosCepControle.getInstancia();
 
@@ -58,18 +57,32 @@ public class CadastrarUsuarioPanel {
             }
         });
 
-        buttonCadastrar.addActionListener(new ActionListener() {
+        labelLogin.addMouseListener(new MouseAdapter() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                cadastrarCliente();
+            public void mouseEntered(MouseEvent e) {
+                super.mouseEntered(e);
+                labelLogin.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            }
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                JPanel panelConteudoProximaPagina = LoginPanel.getInstancia().getPanelConteudo();
+                GerenciadorDePaineis.getInstancia().setContentPane(panelConteudoProximaPagina);
             }
         });
-        buttonBuscarDadosCep.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                buscarInformacoesCep();
-            }
-        });
+
+        buttonCadastrar.addActionListener(e -> cadastrarCliente());
+        buttonBuscarDadosCep.addActionListener(e -> buscarInformacoesCep());
+    }
+
+    public static CadastrarUsuarioPanel getInstancia() {
+        if (instancia == null)
+            instancia = new CadastrarUsuarioPanel();
+        return instancia;
+    }
+
+    public JPanel getPanelConteudo() {
+        return panelConteudo;
     }
 
     private void createUIComponents() {

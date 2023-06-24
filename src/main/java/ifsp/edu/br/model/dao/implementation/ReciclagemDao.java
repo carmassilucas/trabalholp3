@@ -3,6 +3,7 @@ package ifsp.edu.br.model.dao.implementation;
 import ifsp.edu.br.model.dao.IReciclagemDao;
 import ifsp.edu.br.model.database.ConexaoFactory;
 import ifsp.edu.br.model.dto.LoginReciclagemDto;
+import ifsp.edu.br.model.dto.PesquisarMateriaisDto;
 import ifsp.edu.br.model.dto.RelacionarMaterialReciclagemDto;
 import ifsp.edu.br.model.util.MessageDigestUtils;
 import ifsp.edu.br.model.vo.EnderecoVo;
@@ -197,6 +198,39 @@ public class ReciclagemDao implements IReciclagemDao {
             conexao.commit();
 
             ConexaoFactory.fecharConexao(conexao, preparedStatement);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public List<PesquisarMateriaisDto> pesquisarMateriais(PesquisarMateriaisDto dto) {
+        Connection conexao = ConexaoFactory.getConexao();
+        List<PesquisarMateriaisDto> reciclagens = new ArrayList<>();
+        try {
+            PreparedStatement preparedStatement = conexao.prepareStatement(
+                    "SELECT m.id id_material, m.nome material, r.nome, e.logradouro, e.numero, mr.preco " +
+                        "FROM reciclagem r " +
+                        "INNER JOIN endereco e ON e.id = r.id_endereco " +
+                        "INNER JOIN material_reciclagem mr ON r.id = mr.id_reciclagem " +
+                        "INNER JOIN material m ON mr.id_material = m.id " +
+                        "WHERE m.nome ilike '%" + dto.getPesquisa() +"%';"
+            );
+            ResultSet rs = preparedStatement.executeQuery();
+
+            while (rs.next()) {
+                reciclagens.add(new PesquisarMateriaisDto(
+                        UUID.fromString(rs.getString("id_material")),
+                        dto.getPesquisa(),
+                        rs.getString("material"),
+                        rs.getString("nome"),
+                        rs.getString("logradouro"),
+                        rs.getInt("numero"),
+                        rs.getFloat("preco")
+                ));
+            }
+            ConexaoFactory.fecharConexao(conexao, preparedStatement, rs);
+            return reciclagens;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

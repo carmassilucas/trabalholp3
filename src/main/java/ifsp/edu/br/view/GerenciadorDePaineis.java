@@ -35,5 +35,6 @@ public class GerenciadorDePaineis {
     public void setContentPane(JPanel contentPane) {
         frame.setContentPane(contentPane);
         frame.revalidate();
+        frame.transferFocus();
     }
 }

@@ -5,6 +5,7 @@ import ifsp.edu.br.control.exception.LoginReciclagemException;
 import ifsp.edu.br.model.ReciclagemModelo;
 import ifsp.edu.br.model.dto.CadastrarReciclagemDto;
 import ifsp.edu.br.model.dto.LoginReciclagemDto;
+import ifsp.edu.br.model.dto.PesquisarMateriaisDto;
 import ifsp.edu.br.model.dto.RelacionarMaterialReciclagemDto;
 import ifsp.edu.br.model.exception.UsuarioDuplicadoException;
 import ifsp.edu.br.model.util.DtoUtils;
@@ -50,5 +51,9 @@ public class ReciclagemControle {
 
     public void editarPrecoMaterial(RelacionarMaterialReciclagemDto dto) {
         reciclagemModelo.editarPrecoMaterial(dto);
+    }
+
+    public List<PesquisarMateriaisDto> pesquisarMateriais(PesquisarMateriaisDto dto) {
+        return reciclagemModelo.pesquisarMateriais(dto);
     }
 }

@@ -9,11 +9,10 @@ import ifsp.edu.br.model.dto.InformacoesCepDto;
 
 import javax.swing.*;
 import javax.swing.text.MaskFormatter;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+import java.awt.*;
+import java.awt.event.*;
 import java.text.ParseException;
+import java.util.UUID;
 
 public class CadastrarEnderecoPanel {
     private JPanel panelConteudo;
@@ -31,19 +30,19 @@ public class CadastrarEnderecoPanel {
     private JLabel labelCidade;
     private JLabel labelEstado;
     private JButton buttonCadastrarEndereco;
+    private JLabel labelVoltar;
+
+    private static CadastrarEnderecoPanel instancia;
     private final BuscarDadosCepControle buscarInformacoesCepControle;
     private final CadastrarEnderecoControle cadastrarEnderecoControle;
+    private UUID idUsuario;
 
-    public CadastrarEnderecoPanel() {
+    private CadastrarEnderecoPanel() {
         buscarInformacoesCepControle = BuscarDadosCepControle.getInstancia();
         cadastrarEnderecoControle = CadastrarEnderecoControle.getInstancia();
 
-        buttonBuscarDadosCep.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                buscarInformacoesCep();
-            }
-        });
+        buttonBuscarDadosCep.addActionListener(e -> buscarInformacoesCep());
+        buttonCadastrarEndereco.addActionListener(e -> cadastrarEndereco());
         formattedTextFieldCep.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
@@ -54,12 +53,37 @@ public class CadastrarEnderecoPanel {
                 }
             }
         });
-        buttonCadastrarEndereco.addActionListener(new ActionListener() {
+        labelVoltar.addMouseListener(new MouseAdapter() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                cadastrarEndereco();
+            public void mouseEntered(MouseEvent e) {
+                super.mouseEntered(e);
+                labelVoltar.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            }
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+
+                idUsuario = null;
+                JPanel panelConteudoProximaPagina = PesquisarMateriaisPanel.getInstancia().getPanelConteudo();
+                PesquisarMateriaisPanel.getInstancia().carregarComboBox();
+                GerenciadorDePaineis.getInstancia().setContentPane(panelConteudoProximaPagina);
             }
         });
+    }
+
+    public static CadastrarEnderecoPanel getInstancia() {
+        if (instancia == null)
+            instancia = new CadastrarEnderecoPanel();
+        return instancia;
+    }
+
+    public JPanel getPanelConteudo() {
+        return panelConteudo;
+    }
+
+    public void setIdUsuario(UUID idUsuario) {
+        this.idUsuario = idUsuario;
     }
 
     private void createUIComponents() {
@@ -99,6 +123,7 @@ public class CadastrarEnderecoPanel {
     public void cadastrarEndereco() {
         try {
             cadastrarEnderecoControle.cadastrarEndereco(new CadastrarEnderecoDto(
+                    idUsuario,
                     textFieldCidade.getText(),
                     textFieldLogradouro.getText(),
                     textFieldBairro.getText(),
@@ -144,25 +169,5 @@ public class CadastrarEnderecoPanel {
         textFieldCidade.setText(informacoesCepDto.getLocalidade());
         textFieldNumero.setEditable(true);
         textFieldNumero.requestFocus();
-    }
-
-    public static void main(String[] args) {
-        try {
-            for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (UnsupportedLookAndFeelException | ClassNotFoundException | InstantiationException |
-                 IllegalAccessException ignored) { }
-
-        JFrame frame = new JFrame("Cadastro de Endereço");
-        frame.setContentPane(new CadastrarEnderecoPanel().panelConteudo);
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        frame.setResizable(false);
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
     }
 }

@@ -1,7 +1,7 @@
 package ifsp.edu.br.view;
 
 import ifsp.edu.br.control.BuscarDadosCepControle;
-import ifsp.edu.br.control.CadastrarUsuarioControle;
+import ifsp.edu.br.control.ClienteControle;
 import ifsp.edu.br.control.exception.BuscarInformacoesCepException;
 import ifsp.edu.br.control.exception.CadastrarClienteException;
 import ifsp.edu.br.model.dto.CadastrarClienteDto;
@@ -14,7 +14,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.text.ParseException;
 
-public class CadastrarUsuarioPanel {
+public class CadastrarClientePanel {
     private JPanel panelConteudo;
     private JTextField textFieldNome;
     private JTextField textFieldEmail;
@@ -38,12 +38,12 @@ public class CadastrarUsuarioPanel {
     private JButton buttonBuscarDadosCep;
     private JLabel labelLogin;
 
-    private static CadastrarUsuarioPanel instancia;
-    private final CadastrarUsuarioControle controle;
+    private static CadastrarClientePanel instancia;
+    private final ClienteControle controle;
     private final BuscarDadosCepControle buscarDadosCepControle;
 
-    private CadastrarUsuarioPanel() {
-        controle = CadastrarUsuarioControle.getInstancia();
+    private CadastrarClientePanel() {
+        controle = ClienteControle.getInstancia();
         buscarDadosCepControle = BuscarDadosCepControle.getInstancia();
 
         formattedTextFieldCep.addKeyListener(new KeyAdapter() {
@@ -75,9 +75,9 @@ public class CadastrarUsuarioPanel {
         buttonBuscarDadosCep.addActionListener(e -> buscarInformacoesCep());
     }
 
-    public static CadastrarUsuarioPanel getInstancia() {
+    public static CadastrarClientePanel getInstancia() {
         if (instancia == null)
-            instancia = new CadastrarUsuarioPanel();
+            instancia = new CadastrarClientePanel();
         return instancia;
     }
 
@@ -191,7 +191,7 @@ public class CadastrarUsuarioPanel {
                  IllegalAccessException ignored) { }
 
         JFrame frame = new JFrame("Cadastro de Usuário");
-        frame.setContentPane(new CadastrarUsuarioPanel().panelConteudo);
+        frame.setContentPane(new CadastrarClientePanel().panelConteudo);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setResizable(false);
         frame.pack();

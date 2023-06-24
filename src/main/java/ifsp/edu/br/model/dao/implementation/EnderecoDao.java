@@ -8,6 +8,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class EnderecoDao implements IEnderecoDao {
@@ -99,6 +101,37 @@ public class EnderecoDao implements IEnderecoDao {
 
             ConexaoFactory.fecharConexao(conexao, preparedStatement);
         } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public List<EnderecoVo> getEnderecosByIdCliente(UUID id) {
+        Connection conexao = ConexaoFactory.getConexao();
+        PreparedStatement preparedStatement;
+        try {
+            List<EnderecoVo> enderecos = new ArrayList<>();
+
+            preparedStatement = conexao.prepareStatement(
+                    "SELECT e.* FROM cliente_endereco ce INNER JOIN endereco e ON ce.id_endereco = e.id " +
+                            "WHERE ce.id_cliente = '" + id + "';"
+            );
+            ResultSet rs = preparedStatement.executeQuery();
+
+            while(rs.next()) {
+                enderecos.add(new EnderecoVo(
+                        UUID.fromString(rs.getString("id")),
+                        rs.getString("cep"),
+                        rs.getString("cidade"),
+                        rs.getString("logradouro"),
+                        rs.getString("bairro"),
+                        rs.getString("uf"),
+                        rs.getInt("numero"))
+                );
+            }
+            ConexaoFactory.fecharConexao(conexao, preparedStatement, rs);
+            return enderecos;
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }

@@ -1,8 +1,12 @@
 package ifsp.edu.br.view;
 
+import ifsp.edu.br.control.ClienteControle;
 import ifsp.edu.br.control.ReciclagemControle;
+import ifsp.edu.br.control.exception.LoginClienteException;
 import ifsp.edu.br.control.exception.LoginReciclagemException;
+import ifsp.edu.br.model.dto.LoginClienteDto;
 import ifsp.edu.br.model.dto.LoginReciclagemDto;
+import ifsp.edu.br.model.vo.ClienteVo;
 import ifsp.edu.br.model.vo.ReciclagemVo;
 
 import javax.swing.*;
@@ -17,14 +21,16 @@ public class LoginPanel {
     private JPasswordField passwordFieldSenha;
     private JButton buttonEntrar;
     private JLabel labelCadastrar;
-    private JComboBox comboBoxPerfil;
+    private JComboBox<String> comboBoxPerfil;
     private JLabel labelUsuario;
 
     private static LoginPanel instancia;
     private final ReciclagemControle reciclagemControle;
+    private final ClienteControle clienteControle;
 
     private LoginPanel() {
         reciclagemControle = ReciclagemControle.getInstancia();
+        clienteControle = ClienteControle.getInstancia();
 
         labelCadastrar.addMouseListener(new MouseAdapter() {
             @Override
@@ -38,14 +44,12 @@ public class LoginPanel {
                 super.mouseClicked(e);
 
                 JPanel panelConteudoProximaPagina = Objects.equals(comboBoxPerfil.getSelectedItem(), "Cliente") ?
-                        CadastrarUsuarioPanel.getInstancia().getPanelConteudo() :
+                        CadastrarClientePanel.getInstancia().getPanelConteudo() :
                         CadastrarReciclagemPanel.getInstancia().getPanelConteudo();
                 GerenciadorDePaineis.getInstancia().setContentPane(panelConteudoProximaPagina);
             }
         });
-
         buttonEntrar.addActionListener(e -> fazerLogin());
-
         comboBoxPerfil.addActionListener(e ->
             labelUsuario.setText(
                     Objects.equals(comboBoxPerfil.getSelectedItem(), "Cliente") ? "E-mail" : "Usuário"
@@ -60,36 +64,55 @@ public class LoginPanel {
     }
 
     public JPanel getPanelConteudo() {
+        textFieldUsuario.setText("");
+        passwordFieldSenha.setText("");
         return panelConteudo;
     }
 
     private void fazerLogin() {
         try {
-            ReciclagemVo reciclagemVo = reciclagemControle.loginReciclagem(new LoginReciclagemDto(
-                    textFieldUsuario.getText(),
-                    new String(passwordFieldSenha.getPassword())
-            ));
-
-            if (reciclagemVo == null) {
-                JOptionPane.showMessageDialog(
-                        this.panelConteudo,
-                        "Usuário e/ou senha incorretos",
-                        "Erro ao realizar login",
-                        JOptionPane.ERROR_MESSAGE
-                );
-                return;
-            }
-
             JPanel panelConteudoProximaPagina;
             if (Objects.equals(comboBoxPerfil.getSelectedItem(), "Cliente")) {
-                panelConteudoProximaPagina = CadastrarUsuarioPanel.getInstancia().getPanelConteudo();
+                ClienteVo clienteVo = clienteControle.loginCliente(new LoginClienteDto(
+                        textFieldUsuario.getText(),
+                        new String(passwordFieldSenha.getPassword())
+                ));
+
+                if (clienteVo == null) {
+                    JOptionPane.showMessageDialog(
+                            this.panelConteudo,
+                            "E-mail e/ou senha incorretos",
+                            "Erro ao realizar login",
+                            JOptionPane.ERROR_MESSAGE
+                    );
+                    return;
+                }
+
+                panelConteudoProximaPagina = PesquisarMateriaisPanel.getInstancia().getPanelConteudo();
+                PesquisarMateriaisPanel.getInstancia().setIdUsuario(clienteVo.getId());
+                PesquisarMateriaisPanel.getInstancia().carregarComboBox();
             } else {
+                ReciclagemVo reciclagemVo = reciclagemControle.loginReciclagem(new LoginReciclagemDto(
+                        textFieldUsuario.getText(),
+                        new String(passwordFieldSenha.getPassword())
+                ));
+
+                if (reciclagemVo == null) {
+                    JOptionPane.showMessageDialog(
+                            this.panelConteudo,
+                            "Usuário e/ou senha incorretos",
+                            "Erro ao realizar login",
+                            JOptionPane.ERROR_MESSAGE
+                    );
+                    return;
+                }
+
                 panelConteudoProximaPagina = GerenciarMateriaisPanel.getInstancia().getPanelConteudo();
                 GerenciarMateriaisPanel.getInstancia().setIdReciclagem(reciclagemVo.getId());
                 GerenciarMateriaisPanel.getInstancia().carregarTabelas();
             }
             GerenciadorDePaineis.getInstancia().setContentPane(panelConteudoProximaPagina);
-        } catch (LoginReciclagemException e) {
+        } catch (LoginReciclagemException | LoginClienteException e) {
             JOptionPane.showMessageDialog(this.panelConteudo, e.getMessage(), "Houve um engano", JOptionPane.ERROR_MESSAGE);
         }
     }

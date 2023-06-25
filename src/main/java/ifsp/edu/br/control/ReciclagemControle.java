@@ -1,16 +1,13 @@
 package ifsp.edu.br.control;
 
 import ifsp.edu.br.control.exception.CadastrarReciclagemException;
-import ifsp.edu.br.control.exception.LoginReciclagemException;
 import ifsp.edu.br.model.ReciclagemModelo;
 import ifsp.edu.br.model.dto.CadastrarReciclagemDto;
-import ifsp.edu.br.model.dto.LoginReciclagemDto;
 import ifsp.edu.br.model.dto.PesquisarMateriaisDto;
 import ifsp.edu.br.model.dto.RelacionarMaterialReciclagemDto;
 import ifsp.edu.br.model.exception.UsuarioDuplicadoException;
 import ifsp.edu.br.model.util.DtoUtils;
 import ifsp.edu.br.model.vo.MaterialReciclagemVo;
-import ifsp.edu.br.model.vo.ReciclagemVo;
 
 import java.util.List;
 import java.util.UUID;
@@ -33,12 +30,6 @@ public class ReciclagemControle {
         if (DtoUtils.verificaSeAtributoNullOrEmpty(dto))
             throw new CadastrarReciclagemException("Preencha todos os campos para se cadastrar");
         reciclagemModelo.cadastrarReciclagem(dto);
-    }
-
-    public ReciclagemVo loginReciclagem(LoginReciclagemDto dto) throws LoginReciclagemException {
-        if (DtoUtils.verificaSeAtributoNullOrEmpty(dto))
-            throw new LoginReciclagemException("Preencha todos os campos para fazer o login");
-        return reciclagemModelo.loginReciclagem(dto);
     }
 
     public Integer relacionarMaterialReciclagem(RelacionarMaterialReciclagemDto dto) {

@@ -4,6 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @AllArgsConstructor
-public @Data class LoginReciclagemDto {
-    String usuario, senha;
+public @Data class AutenticacaoDto {
+    String perfil, usuario, senha;
 }

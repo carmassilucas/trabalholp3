@@ -84,6 +84,7 @@
           <model>
             <item value="Cliente"/>
             <item value="Reciclagem"/>
+            <item value="Administrador"/>
           </model>
         </properties>
       </component>

@@ -7,61 +7,77 @@ import ifsp.edu.br.model.exception.MaterialDuplicadoException;
 import ifsp.edu.br.model.vo.MaterialVo;
 
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.EventObject;
 import java.util.List;
+import java.util.UUID;
 
 public class ManterMaterialPanel {
     private JPanel panelConteudo;
     private JTextField textFieldNome;
     private JTextArea textAreaDescricao;
-    private JLabel labelNome;
-    private JLabel labelDescricao;
     private JButton cadastrarButton;
     private JTable tableMateriais;
     private JButton editarButton;
-    private JScrollPane scrollPaneTabela;
-    private MaterialControle materialControle;
+    private JLabel labelSair;
+
+    private static ManterMaterialPanel instancia;
+    private final MaterialControle materialControle;
     private List<MaterialVo> materiais;
-    public ManterMaterialPanel() {
+    private UUID idAdministrador;
+
+    private ManterMaterialPanel() {
         materialControle = MaterialControle.getInstancia();
 
-        cadastrarButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                cadastrarMaterial();
-            }
-        });
-        editarButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                editarMaterial();
-            }
-        });
-        tableMateriais.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                if (!e.getValueIsAdjusting())
-                    selecionarMaterial();
-            }
+        cadastrarButton.addActionListener(e -> cadastrarMaterial());
+        editarButton.addActionListener(e -> editarMaterial());
+        tableMateriais.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting())
+                selecionarMaterial();
         });
         panelConteudo.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                if(tableMateriais.getSelectedRow() != -1) {
+                if(tableMateriais.getSelectedRow() != -1)
                     limparCampos();
-                }
+            }
+        });
+        labelSair.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                super.mouseEntered(e);
+                labelSair.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            }
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+
+                idAdministrador = null;
+                JPanel panelConteudoProximaPagina = LoginPanel.getInstancia().getPanelConteudo();
+                GerenciadorDePaineis.getInstancia().setContentPane(panelConteudoProximaPagina);
             }
         });
 
         carregarTabela();
+    }
+
+    public static ManterMaterialPanel getInstancia() {
+        if (instancia == null)
+            instancia = new ManterMaterialPanel();
+        return instancia;
+    }
+
+    public JPanel getPanelConteudo() {
+        return panelConteudo;
+    }
+
+    public void setIdAdministrador(UUID idAdministrador) {
+        this.idAdministrador = idAdministrador;
     }
 
     private void cadastrarMaterial() {

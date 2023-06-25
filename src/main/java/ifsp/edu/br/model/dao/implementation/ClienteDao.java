@@ -2,16 +2,14 @@ package ifsp.edu.br.model.dao.implementation;
 
 import ifsp.edu.br.model.dao.IClienteDao;
 import ifsp.edu.br.model.database.ConexaoFactory;
-import ifsp.edu.br.model.dto.LoginClienteDto;
+import ifsp.edu.br.model.dto.AutenticacaoDto;
 import ifsp.edu.br.model.util.MessageDigestUtils;
 import ifsp.edu.br.model.vo.ClienteVo;
-import ifsp.edu.br.model.vo.EnderecoVo;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
 import java.util.UUID;
 
 public class ClienteDao implements IClienteDao {
@@ -77,14 +75,14 @@ public class ClienteDao implements IClienteDao {
     }
 
     @Override
-    public ClienteVo buscarClienteByEmailAndSenha(LoginClienteDto dto) {
+    public ClienteVo buscarClienteByEmailAndSenha(AutenticacaoDto dto) {
         Connection conexao = ConexaoFactory.getConexao();
         PreparedStatement preparedStatement;
         try {
             ClienteVo clienteVo = null;
 
             preparedStatement = conexao.prepareStatement("SELECT * FROM cliente WHERE email = ? AND senha = ? LIMIT 1;");
-            preparedStatement.setString(1, dto.getEmail());
+            preparedStatement.setString(1, dto.getUsuario());
             preparedStatement.setString(2, MessageDigestUtils.hashSenha(dto.getSenha()));
             ResultSet rs = preparedStatement.executeQuery();
 

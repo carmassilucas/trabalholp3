@@ -1,12 +1,12 @@
 package ifsp.edu.br.model;
 
 import ifsp.edu.br.control.exception.CadastrarClienteException;
-import ifsp.edu.br.model.dao.IEnderecoDao;
 import ifsp.edu.br.model.dao.IClienteDao;
-import ifsp.edu.br.model.dao.implementation.EnderecoDao;
+import ifsp.edu.br.model.dao.IEnderecoDao;
 import ifsp.edu.br.model.dao.implementation.ClienteDao;
+import ifsp.edu.br.model.dao.implementation.EnderecoDao;
+import ifsp.edu.br.model.dto.AutenticacaoDto;
 import ifsp.edu.br.model.dto.CadastrarClienteDto;
-import ifsp.edu.br.model.dto.LoginClienteDto;
 import ifsp.edu.br.model.exception.EmailDuplicadoException;
 import ifsp.edu.br.model.util.MessageDigestUtils;
 import ifsp.edu.br.model.vo.ClienteVo;
@@ -48,7 +48,7 @@ public class ClienteModelo {
         enderecoDao.relacionarClienteEndereco(clienteVo.getId(), enderecoVo.getId());
     }
 
-    public ClienteVo loginCliente(LoginClienteDto dto) {
+    public ClienteVo autenticar(AutenticacaoDto dto) {
         return clienteDao.buscarClienteByEmailAndSenha(dto);
     }
 

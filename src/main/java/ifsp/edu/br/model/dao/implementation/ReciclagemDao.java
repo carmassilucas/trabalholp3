@@ -2,7 +2,7 @@ package ifsp.edu.br.model.dao.implementation;
 
 import ifsp.edu.br.model.dao.IReciclagemDao;
 import ifsp.edu.br.model.database.ConexaoFactory;
-import ifsp.edu.br.model.dto.LoginReciclagemDto;
+import ifsp.edu.br.model.dto.AutenticacaoDto;
 import ifsp.edu.br.model.dto.PesquisarMateriaisDto;
 import ifsp.edu.br.model.dto.RelacionarMaterialReciclagemDto;
 import ifsp.edu.br.model.util.MessageDigestUtils;
@@ -57,7 +57,7 @@ public class ReciclagemDao implements IReciclagemDao {
     }
 
     @Override
-    public ReciclagemVo buscarReciclagemByUsuarioAndSenha(LoginReciclagemDto dto) {
+    public ReciclagemVo buscarReciclagemByUsuarioAndSenha(AutenticacaoDto dto) {
         Connection conexao = ConexaoFactory.getConexao();
         PreparedStatement preparedStatement;
         try {

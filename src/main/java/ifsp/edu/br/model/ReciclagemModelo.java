@@ -2,8 +2,8 @@ package ifsp.edu.br.model;
 
 import ifsp.edu.br.model.dao.implementation.EnderecoDao;
 import ifsp.edu.br.model.dao.implementation.ReciclagemDao;
+import ifsp.edu.br.model.dto.AutenticacaoDto;
 import ifsp.edu.br.model.dto.CadastrarReciclagemDto;
-import ifsp.edu.br.model.dto.LoginReciclagemDto;
 import ifsp.edu.br.model.dto.PesquisarMateriaisDto;
 import ifsp.edu.br.model.dto.RelacionarMaterialReciclagemDto;
 import ifsp.edu.br.model.exception.UsuarioDuplicadoException;
@@ -46,7 +46,7 @@ public class ReciclagemModelo {
         reciclagemDao.cadastrarReciclagem(ReciclagemVo.toVo(dto, enderecoVo.getId()));
     }
 
-    public ReciclagemVo loginReciclagem(LoginReciclagemDto dto) {
+    public ReciclagemVo autenticar(AutenticacaoDto dto) {
         return reciclagemDao.buscarReciclagemByUsuarioAndSenha(dto);
     }
 

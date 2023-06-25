@@ -1,11 +1,9 @@
 package ifsp.edu.br.view;
 
-import ifsp.edu.br.control.ClienteControle;
-import ifsp.edu.br.control.ReciclagemControle;
-import ifsp.edu.br.control.exception.LoginClienteException;
-import ifsp.edu.br.control.exception.LoginReciclagemException;
-import ifsp.edu.br.model.dto.LoginClienteDto;
-import ifsp.edu.br.model.dto.LoginReciclagemDto;
+import ifsp.edu.br.control.AutenticacaoControle;
+import ifsp.edu.br.control.exception.AutenticacaoException;
+import ifsp.edu.br.model.dto.AutenticacaoDto;
+import ifsp.edu.br.model.vo.AdministradorVo;
 import ifsp.edu.br.model.vo.ClienteVo;
 import ifsp.edu.br.model.vo.ReciclagemVo;
 
@@ -25,12 +23,10 @@ public class LoginPanel {
     private JLabel labelUsuario;
 
     private static LoginPanel instancia;
-    private final ReciclagemControle reciclagemControle;
-    private final ClienteControle clienteControle;
+    private final AutenticacaoControle autenticacaoControle;
 
     private LoginPanel() {
-        reciclagemControle = ReciclagemControle.getInstancia();
-        clienteControle = ClienteControle.getInstancia();
+        autenticacaoControle = AutenticacaoControle.getInstancia();
 
         labelCadastrar.addMouseListener(new MouseAdapter() {
             @Override
@@ -70,50 +66,57 @@ public class LoginPanel {
     }
 
     private void fazerLogin() {
+        String perfil = Objects.requireNonNull(comboBoxPerfil.getSelectedItem()).toString();
+
         try {
-            JPanel panelConteudoProximaPagina;
-            if (Objects.equals(comboBoxPerfil.getSelectedItem(), "Cliente")) {
-                ClienteVo clienteVo = clienteControle.loginCliente(new LoginClienteDto(
-                        textFieldUsuario.getText(),
-                        new String(passwordFieldSenha.getPassword())
-                ));
+            var autenticacaoRetorno = autenticacaoControle.autenticar(new AutenticacaoDto(
+                    perfil,
+                    textFieldUsuario.getText(),
+                    new String(passwordFieldSenha.getPassword())
+            ));
 
-                if (clienteVo == null) {
-                    JOptionPane.showMessageDialog(
-                            this.panelConteudo,
-                            "E-mail e/ou senha incorretos",
-                            "Erro ao realizar login",
-                            JOptionPane.ERROR_MESSAGE
-                    );
-                    return;
-                }
-
-                panelConteudoProximaPagina = PesquisarMateriaisPanel.getInstancia().getPanelConteudo();
-                PesquisarMateriaisPanel.getInstancia().setIdUsuario(clienteVo.getId());
-                PesquisarMateriaisPanel.getInstancia().carregarComboBox();
-            } else {
-                ReciclagemVo reciclagemVo = reciclagemControle.loginReciclagem(new LoginReciclagemDto(
-                        textFieldUsuario.getText(),
-                        new String(passwordFieldSenha.getPassword())
-                ));
-
-                if (reciclagemVo == null) {
-                    JOptionPane.showMessageDialog(
-                            this.panelConteudo,
-                            "Usuário e/ou senha incorretos",
-                            "Erro ao realizar login",
-                            JOptionPane.ERROR_MESSAGE
-                    );
-                    return;
-                }
-
-                panelConteudoProximaPagina = GerenciarMateriaisPanel.getInstancia().getPanelConteudo();
-                GerenciarMateriaisPanel.getInstancia().setIdReciclagem(reciclagemVo.getId());
-                GerenciarMateriaisPanel.getInstancia().carregarTabelas();
+            if (autenticacaoRetorno == null) {
+                JOptionPane.showMessageDialog(
+                        this.panelConteudo,
+                        "Usuário e/ou senha incorretos",
+                        "Erro ao realizar login",
+                        JOptionPane.ERROR_MESSAGE
+                );
+                return;
             }
+
+            JPanel panelConteudoProximaPagina = redirecionarPagina(perfil, autenticacaoRetorno);
             GerenciadorDePaineis.getInstancia().setContentPane(panelConteudoProximaPagina);
-        } catch (LoginReciclagemException | LoginClienteException e) {
-            JOptionPane.showMessageDialog(this.panelConteudo, e.getMessage(), "Houve um engano", JOptionPane.ERROR_MESSAGE);
+        } catch (AutenticacaoException e) {
+            JOptionPane.showMessageDialog(
+                    this.panelConteudo,
+                    e.getMessage(),
+                    "Houve um engano",
+                    JOptionPane.WARNING_MESSAGE
+            );
         }
+    }
+
+    private JPanel redirecionarPagina(String perfil, Object autenticacaoRetorno) {
+        switch (perfil) {
+            case "Cliente" -> {
+                PesquisarMateriaisPanel pesquisarMateriaisPanel = PesquisarMateriaisPanel.getInstancia();
+                pesquisarMateriaisPanel.setIdCliente(((ClienteVo) autenticacaoRetorno).getId());
+                pesquisarMateriaisPanel.carregarComboBox();
+                return pesquisarMateriaisPanel.getPanelConteudo();
+            }
+            case "Reciclagem" -> {
+                GerenciarMateriaisPanel gerenciarMateriaisPanel = GerenciarMateriaisPanel.getInstancia();
+                gerenciarMateriaisPanel.setIdReciclagem(((ReciclagemVo) autenticacaoRetorno).getId());
+                gerenciarMateriaisPanel.carregarTabelas();
+                return gerenciarMateriaisPanel.getPanelConteudo();
+            }
+            case "Administrador" -> {
+                ManterMaterialPanel manterMaterialPanel = ManterMaterialPanel.getInstancia();
+                manterMaterialPanel.setIdAdministrador(((AdministradorVo) autenticacaoRetorno).getId());
+                return manterMaterialPanel.getPanelConteudo();
+            }
+        }
+        return null;
     }
 }

@@ -32,7 +32,7 @@ public class PesquisarMateriaisPanel {
     private static PesquisarMateriaisPanel instancia;
     private final ClienteControle clienteControle;
     private final ReciclagemControle reciclagemControle;
-    private UUID idUsuario;
+    private UUID idCliente;
 
     private PesquisarMateriaisPanel() {
         clienteControle = ClienteControle.getInstancia();
@@ -57,7 +57,7 @@ public class PesquisarMateriaisPanel {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
 
-                idUsuario = null;
+                idCliente = null;
                 JPanel panelConteudoProximaPagina = LoginPanel.getInstancia().getPanelConteudo();
                 GerenciadorDePaineis.getInstancia().setContentPane(panelConteudoProximaPagina);
             }
@@ -73,7 +73,7 @@ public class PesquisarMateriaisPanel {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
 
-                CadastrarEnderecoPanel.getInstancia().setIdUsuario(idUsuario);
+                CadastrarEnderecoPanel.getInstancia().setIdUsuario(idCliente);
                 JPanel panelConteudoProximaPagina = CadastrarEnderecoPanel.getInstancia().getPanelConteudo();
                 GerenciadorDePaineis.getInstancia().setContentPane(panelConteudoProximaPagina);
             }
@@ -106,8 +106,8 @@ public class PesquisarMateriaisPanel {
         return panelConteudo;
     }
 
-    public void setIdUsuario(UUID idUsuario) {
-        this.idUsuario = idUsuario;
+    public void setIdCliente(UUID idCliente) {
+        this.idCliente = idCliente;
     }
 
     public void adicionarMaterialLista() {
@@ -139,7 +139,7 @@ public class PesquisarMateriaisPanel {
 
     public void carregarComboBox() {
         comboBoxEndereco.removeAllItems();
-        for (EnderecoVo e : clienteControle.getEnderecosByIdCliente(idUsuario))
+        for (EnderecoVo e : clienteControle.getEnderecosByIdCliente(idCliente))
             comboBoxEndereco.addItem(e.getLogradouro() + ", " + e.getNumero());
     }
 

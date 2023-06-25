@@ -1,13 +1,10 @@
 package ifsp.edu.br.control;
 
 import ifsp.edu.br.control.exception.CadastrarClienteException;
-import ifsp.edu.br.control.exception.LoginClienteException;
 import ifsp.edu.br.model.ClienteModelo;
 import ifsp.edu.br.model.dto.CadastrarClienteDto;
-import ifsp.edu.br.model.dto.LoginClienteDto;
 import ifsp.edu.br.model.exception.EmailDuplicadoException;
 import ifsp.edu.br.model.util.DtoUtils;
-import ifsp.edu.br.model.vo.ClienteVo;
 import ifsp.edu.br.model.vo.EnderecoVo;
 
 import java.util.List;
@@ -36,12 +33,6 @@ public class ClienteControle {
         if (!validarEmail(dto.getEmail()))
             throw new CadastrarClienteException("E-mail inválido");
         clienteModelo.cadastrarCliente(dto);
-    }
-
-    public ClienteVo loginCliente(LoginClienteDto dto) throws LoginClienteException {
-        if (DtoUtils.verificaSeAtributoNullOrEmpty(dto))
-            throw new LoginClienteException("Preencha todos os campos para fazer o login");
-        return clienteModelo.loginCliente(dto);
     }
 
     public List<EnderecoVo> getEnderecosByIdCliente(UUID id) {

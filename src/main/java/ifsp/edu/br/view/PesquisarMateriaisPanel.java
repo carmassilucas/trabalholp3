@@ -1,13 +1,14 @@
 package ifsp.edu.br.view;
 
 import ifsp.edu.br.control.ClienteControle;
+import ifsp.edu.br.control.ListaControle;
 import ifsp.edu.br.control.ReciclagemControle;
+import ifsp.edu.br.control.exception.AdicionarMaterialListaException;
+import ifsp.edu.br.model.dto.CadastrarMaterialListaDto;
 import ifsp.edu.br.model.dto.PesquisarMateriaisDto;
 import ifsp.edu.br.model.vo.EnderecoVo;
 
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -32,18 +33,17 @@ public class PesquisarMateriaisPanel {
     private static PesquisarMateriaisPanel instancia;
     private final ClienteControle clienteControle;
     private final ReciclagemControle reciclagemControle;
+    private final ListaControle listaControle;
     private UUID idCliente;
 
     private PesquisarMateriaisPanel() {
         clienteControle = ClienteControle.getInstancia();
         reciclagemControle = ReciclagemControle.getInstancia();
+        listaControle = ListaControle.getInstancia();
 
-        tableMateriaisPesquisados.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                if (!e.getValueIsAdjusting())
-                    buttonAdicionarLista.setEnabled(true);
-            }
+        tableMateriaisPesquisados.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting())
+                buttonAdicionarLista.setEnabled(true);
         });
         buttonAdicionarLista.addActionListener(e -> adicionarMaterialLista());
         labelSair.addMouseListener(new MouseAdapter() {
@@ -62,6 +62,24 @@ public class PesquisarMateriaisPanel {
                 GerenciadorDePaineis.getInstancia().setContentPane(panelConteudoProximaPagina);
             }
         });
+        labelLista.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                super.mouseEntered(e);
+                labelLista.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            }
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+
+                ListaMeteriaisPanel listaMaterialPanel = ListaMeteriaisPanel.getInstancia();
+                listaMaterialPanel.setIdCliente(idCliente);
+                listaMaterialPanel.carregarTabela();
+                JPanel panelConteudoProximaPagina = listaMaterialPanel.getPanelConteudo();
+                GerenciadorDePaineis.getInstancia().setContentPane(panelConteudoProximaPagina);
+            }
+        });
         labelCadastrarEndereco.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
@@ -73,8 +91,9 @@ public class PesquisarMateriaisPanel {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
 
-                CadastrarEnderecoPanel.getInstancia().setIdUsuario(idCliente);
-                JPanel panelConteudoProximaPagina = CadastrarEnderecoPanel.getInstancia().getPanelConteudo();
+                CadastrarEnderecoPanel cadastrarEnderecoPanel = CadastrarEnderecoPanel.getInstancia();
+                cadastrarEnderecoPanel.setIdUsuario(idCliente);
+                JPanel panelConteudoProximaPagina = cadastrarEnderecoPanel.getPanelConteudo();
                 GerenciadorDePaineis.getInstancia().setContentPane(panelConteudoProximaPagina);
             }
         });
@@ -111,7 +130,35 @@ public class PesquisarMateriaisPanel {
     }
 
     public void adicionarMaterialLista() {
+        int indexLinhaSeleciona = tableMateriaisPesquisados.getSelectedRow();
 
+        String nomeMaterial = tableMateriaisPesquisados.getValueAt(indexLinhaSeleciona, 0).toString();
+        String nomeReciclagem = tableMateriaisPesquisados.getValueAt(indexLinhaSeleciona, 1).toString();
+
+        try {
+            listaControle.cadastrarMaterialLista(new CadastrarMaterialListaDto(
+                    idCliente,
+                    null,
+                    null,
+                    nomeMaterial,
+                    nomeReciclagem
+            ));
+        } catch (AdicionarMaterialListaException e) {
+            JOptionPane.showMessageDialog(this.panelConteudo, e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        JOptionPane.showMessageDialog(
+                this.panelConteudo,
+                "Material adicionado à sua lista",
+                "Sucesso",
+                JOptionPane.INFORMATION_MESSAGE
+        );
+
+        tableMateriaisPesquisados.removeRowSelectionInterval(tableMateriaisPesquisados.getSelectedRow(), 0);
+        textFieldMaterial.setText("");
+        textFieldMaterial.requestFocus();
+        carregarTabela();
     }
 
     public void carregarTabela() {
@@ -144,7 +191,9 @@ public class PesquisarMateriaisPanel {
     }
 
     private void createUIComponents() {
-        DefaultTableModel model = new DefaultTableModel(new String[]{"Material", "Reciclagem", "Endereço", "Valor pago (kg)"}, 0);
+        DefaultTableModel model = new DefaultTableModel(new String[]{
+                "Material", "Reciclagem", "Endereço", "Valor pago (kg)"
+        }, 0);
         tableMateriaisPesquisados = new JTable(model) {
             @Override
             public boolean editCellAt(int row, int column, EventObject e) {

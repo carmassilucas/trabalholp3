@@ -235,4 +235,31 @@ public class ReciclagemDao implements IReciclagemDao {
             throw new RuntimeException(e);
         }
     }
+
+    @Override
+    public ReciclagemVo buscarReciclagemByNome(String nomeReciclagem) {
+        Connection conexao = ConexaoFactory.getConexao();
+        try {
+            PreparedStatement preparedStatement = conexao.prepareStatement(
+                    "SELECT * FROM reciclagem WHERE nome = ? LIMIT 1;"
+            );
+            preparedStatement.setString(1, nomeReciclagem);
+            ResultSet rs = preparedStatement.executeQuery();
+
+            if (rs.next()) {
+                ReciclagemVo reciclagem = new ReciclagemVo(
+                        UUID.fromString(rs.getString("id")),
+                        new EnderecoVo(UUID.fromString(rs.getString("id_endereco"))),
+                        rs.getString("nome"),
+                        rs.getString("usuario"),
+                        rs.getString("senha")
+                );
+                ConexaoFactory.fecharConexao(conexao, preparedStatement, rs);
+                return reciclagem;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
+    }
 }

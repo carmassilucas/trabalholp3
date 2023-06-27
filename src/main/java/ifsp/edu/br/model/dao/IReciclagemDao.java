@@ -18,4 +18,5 @@ public interface IReciclagemDao {
     List<MaterialReciclagemVo> buscarMateriais(UUID idReciclagem);
     void editarPrecoMaterial(RelacionarMaterialReciclagemDto dto);
     List<PesquisarMateriaisDto> pesquisarMateriais(PesquisarMateriaisDto dto);
+    ReciclagemVo buscarReciclagemByNome(String nomeReciclagem);
 }

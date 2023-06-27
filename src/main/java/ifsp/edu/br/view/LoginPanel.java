@@ -9,6 +9,8 @@ import ifsp.edu.br.model.vo.ReciclagemVo;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Objects;
@@ -39,6 +41,9 @@ public class LoginPanel {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
 
+                if (Objects.equals(comboBoxPerfil.getSelectedItem(), "Cliente"))
+                    return;
+
                 JPanel panelConteudoProximaPagina = Objects.equals(comboBoxPerfil.getSelectedItem(), "Cliente") ?
                         CadastrarClientePanel.getInstancia().getPanelConteudo() :
                         CadastrarReciclagemPanel.getInstancia().getPanelConteudo();
@@ -46,11 +51,24 @@ public class LoginPanel {
             }
         });
         buttonEntrar.addActionListener(e -> fazerLogin());
-        comboBoxPerfil.addActionListener(e ->
-            labelUsuario.setText(
-                    Objects.equals(comboBoxPerfil.getSelectedItem(), "Cliente") ? "E-mail" : "Usuário"
-            )
-        );
+        comboBoxPerfil.addActionListener(e -> {
+            labelUsuario.setText(Objects.equals(
+                    comboBoxPerfil.getSelectedItem(), "Cliente") ? "E-mail" : "Usuário"
+            );
+
+            labelCadastrar.setText(Objects.equals(
+                    comboBoxPerfil.getSelectedItem(), "Administrador") ? "" : "Clique aqui para cadastrar-se"
+            );
+        });
+        passwordFieldSenha.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                super.keyReleased(e);
+
+                if (e.getKeyCode() == 10)
+                    fazerLogin();
+            }
+        });
     }
 
     public static LoginPanel getInstancia() {

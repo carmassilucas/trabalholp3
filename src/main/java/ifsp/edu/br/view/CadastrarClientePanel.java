@@ -40,11 +40,10 @@ public class CadastrarClientePanel {
         formattedTextFieldCep.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
-            super.keyReleased(e);
+                super.keyReleased(e);
 
-            if (e.getKeyCode() == 10) {
-                buscarInformacoesCep();
-            }
+                if (e.getKeyCode() == 10)
+                    buscarInformacoesCep();
             }
         });
 

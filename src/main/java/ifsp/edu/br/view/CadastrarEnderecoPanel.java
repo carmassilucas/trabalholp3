@@ -17,18 +17,12 @@ import java.util.UUID;
 public class CadastrarEnderecoPanel {
     private JPanel panelConteudo;
     private JTextField textFieldLogradouro;
-    private JLabel labelLogradouro;
     private JTextField textFieldNumero;
     private JTextField textFieldEstado;
     private JTextField textFieldCidade;
     private JFormattedTextField formattedTextFieldCep;
     private JButton buttonBuscarDadosCep;
-    private JLabel labelCep;
-    private JLabel labelNumero;
-    private JLabel labelBairro;
     private JTextField textFieldBairro;
-    private JLabel labelCidade;
-    private JLabel labelEstado;
     private JButton buttonCadastrarEndereco;
     private JLabel labelVoltar;
 

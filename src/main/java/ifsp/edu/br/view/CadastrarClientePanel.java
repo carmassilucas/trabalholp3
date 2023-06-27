@@ -21,19 +21,10 @@ public class CadastrarClientePanel {
     private JTextField textFieldLogradouro;
     private JFormattedTextField formattedTextFieldCep;
     private JTextField textFieldNumero;
-    private JLabel labelNome;
-    private JLabel labelEmail;
-    private JLabel labelLogradouro;
-    private JLabel labelCep;
-    private JLabel labelCidade;
     private JButton buttonCadastrar;
     private JTextField textFieldBairro;
-    private JLabel labelNumero;
-    private JLabel labelEstado;
     private JTextField textFieldEstado;
-    private JLabel labelSenha;
     private JPasswordField passwordFieldSenha;
-    private JLabel labelBairro;
     private JTextField textFieldCidade;
     private JButton buttonBuscarDadosCep;
     private JLabel labelLogin;
@@ -177,25 +168,5 @@ public class CadastrarClientePanel {
         passwordFieldSenha.setText("");
         limparCamposEndereco();
         textFieldNome.requestFocus();
-    }
-
-    public static void main(String[] args) {
-        try {
-            for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (UnsupportedLookAndFeelException | ClassNotFoundException | InstantiationException |
-                 IllegalAccessException ignored) { }
-
-        JFrame frame = new JFrame("Cadastro de Usuário");
-        frame.setContentPane(new CadastrarClientePanel().panelConteudo);
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        frame.setResizable(false);
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
     }
 }

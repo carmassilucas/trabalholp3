@@ -30,7 +30,7 @@ public class NegociarMateriaisPanel {
     private final ReciclagemControle reciclagemControle;
     private final MaterialControle materialControle;
     private List<MaterialReciclagemVo> materiaisReciclagem;
-    private List<MaterialVo> materiais;
+    private final List<MaterialVo> materiais;
     private UUID idReciclagem;
 
     private NegociarMateriaisPanel() {

@@ -6,6 +6,7 @@ import ifsp.edu.br.model.exception.MaterialDuplicadoException;
 import ifsp.edu.br.model.vo.MaterialVo;
 
 import java.util.List;
+import java.util.UUID;
 
 public class MaterialModelo {
     private static MaterialModelo instacia;
@@ -32,5 +33,9 @@ public class MaterialModelo {
 
     public void editarMaterial(MaterialVo material) {
         materialDao.editarMaterial(material);
+    }
+
+    public MaterialVo getById(UUID id) {
+        return materialDao.getById(id);
     }
 }

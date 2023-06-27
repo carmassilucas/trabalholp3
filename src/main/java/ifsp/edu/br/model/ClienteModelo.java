@@ -34,7 +34,7 @@ public class ClienteModelo {
 
     public void cadastrarCliente(CadastrarClienteDto dto) throws EmailDuplicadoException,
             CadastrarClienteException {
-        if(clienteDao.buscarUsuarioByEmail(dto.getEmail()) != null)
+        if(clienteDao.buscarClienteByEmail(dto.getEmail()) != null)
             throw new EmailDuplicadoException("Endereço de e-mail já cadastrado.");
 
         try {
@@ -43,7 +43,7 @@ public class ClienteModelo {
             throw new RuntimeException(e);
         }
 
-        ClienteVo clienteVo = clienteDao.cadastrarUsuario(ClienteVo.toVo(dto));
+        ClienteVo clienteVo = clienteDao.cadastrarCliente(ClienteVo.toVo(dto));
         EnderecoVo enderecoVo = enderecoDao.cadastrarEndereco(EnderecoVo.toVo(dto));
         enderecoDao.relacionarClienteEndereco(clienteVo.getId(), enderecoVo.getId());
     }

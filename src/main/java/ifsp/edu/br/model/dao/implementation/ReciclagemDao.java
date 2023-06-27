@@ -3,6 +3,7 @@ package ifsp.edu.br.model.dao.implementation;
 import ifsp.edu.br.model.dao.IReciclagemDao;
 import ifsp.edu.br.model.database.ConexaoFactory;
 import ifsp.edu.br.model.dto.AutenticacaoDto;
+import ifsp.edu.br.model.dto.NegociarMaterialDto;
 import ifsp.edu.br.model.dto.PesquisarMateriaisDto;
 import ifsp.edu.br.model.dto.RelacionarMaterialReciclagemDto;
 import ifsp.edu.br.model.util.MessageDigestUtils;
@@ -11,6 +12,7 @@ import ifsp.edu.br.model.vo.MaterialReciclagemVo;
 import ifsp.edu.br.model.vo.ReciclagemVo;
 
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -261,5 +263,36 @@ public class ReciclagemDao implements IReciclagemDao {
             throw new RuntimeException(e);
         }
         return null;
+    }
+
+    @Override
+    public void negociar(NegociarMaterialDto dto) {
+        Connection conexao = ConexaoFactory.getConexao();
+        try {
+            conexao.setAutoCommit(false);
+
+            UUID idItem = UUID.randomUUID();
+
+            PreparedStatement preparedStatement = conexao.prepareStatement(
+                    "INSERT INTO item VALUES ('" + idItem + "', '"
+                            + dto.getIdMaterial() + "', ?);"
+            );
+            preparedStatement.setFloat(1, dto.getPreco());
+            preparedStatement.executeUpdate();
+
+            preparedStatement = conexao.prepareStatement(
+                    "INSERT INTO negociacao VALUES ('" + dto.getIdCliente() + "', '" + idItem + "', " +
+                            "'" + dto.getIdReciclagem() + "', ?, ?);"
+            );
+            preparedStatement.setTimestamp(1, Timestamp.valueOf(LocalDateTime.now()));
+            preparedStatement.setFloat(2, (dto.getPeso() * dto.getPreco()));
+            preparedStatement.executeUpdate();
+
+            conexao.commit();
+
+            ConexaoFactory.fecharConexao(conexao, preparedStatement);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

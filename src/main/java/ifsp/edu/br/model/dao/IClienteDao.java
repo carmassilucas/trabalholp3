@@ -6,9 +6,9 @@ import ifsp.edu.br.model.exception.EmailDuplicadoException;
 import ifsp.edu.br.model.vo.ClienteVo;
 
 public interface IClienteDao {
-    ClienteVo cadastrarUsuario(ClienteVo clienteDao) throws EmailDuplicadoException,
+    ClienteVo cadastrarCliente(ClienteVo clienteDao) throws EmailDuplicadoException,
             CadastrarClienteException;
-    ClienteVo buscarUsuarioByEmail(String email);
+    ClienteVo buscarClienteByEmail(String email);
 
     ClienteVo buscarClienteByEmailAndSenha(AutenticacaoDto dto);
 }

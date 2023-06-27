@@ -9,5 +9,4 @@ import java.util.UUID;
 public @Data class MaterialReciclagemVo {
     UUID idMaterial, idReciclagem;
     Float preco;
-
 }

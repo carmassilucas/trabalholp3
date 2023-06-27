@@ -25,7 +25,7 @@ public class GerenciarMateriaisPanel {
     private JButton buttonEditar;
     private JTable tableMateriaisReciclagem;
     private JTable tableMateriaisSistema;
-    private JLabel labelSair;
+    private JLabel labelVoltar;
 
     private final MaterialControle materialControle;
     private final ReciclagemControle reciclagemControle;
@@ -56,11 +56,11 @@ public class GerenciarMateriaisPanel {
                 limparCampos();
             }
         });
-        labelSair.addMouseListener(new MouseAdapter() {
+        labelVoltar.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
                 super.mouseEntered(e);
-                labelSair.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                labelVoltar.setCursor(new Cursor(Cursor.HAND_CURSOR));
             }
 
             @Override
@@ -68,7 +68,7 @@ public class GerenciarMateriaisPanel {
                 super.mouseClicked(e);
 
                 idReciclagem = null;
-                JPanel panelConteudoProximaPagina = LoginPanel.getInstancia().getPanelConteudo();
+                JPanel panelConteudoProximaPagina = NegociarMateriaisPanel.getInstancia().getPanelConteudo();
                 GerenciadorDePaineis.getInstancia().setContentPane(panelConteudoProximaPagina);
             }
         });

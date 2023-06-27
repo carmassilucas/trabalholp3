@@ -107,4 +107,28 @@ public class MaterialDao implements IMaterialDao {
             throw new RuntimeException(e);
         }
     }
+
+    @Override
+    public MaterialVo getById(UUID id) {
+        Connection conexao = ConexaoFactory.getConexao();
+        try {
+            PreparedStatement preparedStatement = conexao.prepareStatement(
+                    "SELECT * FROM material WHERE id = '" + id + "' LIMIT 1;"
+            );
+            ResultSet rs = preparedStatement.executeQuery();
+
+            MaterialVo material = null;
+            while (rs.next()) {
+                material = new MaterialVo(
+                        UUID.fromString(rs.getString("id")),
+                        rs.getString("nome"),
+                        rs.getString("descricao")
+                );
+            }
+            ConexaoFactory.fecharConexao(conexao, preparedStatement, rs);
+            return material;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

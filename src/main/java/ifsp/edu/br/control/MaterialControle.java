@@ -8,6 +8,7 @@ import ifsp.edu.br.model.util.DtoUtils;
 import ifsp.edu.br.model.vo.MaterialVo;
 
 import java.util.List;
+import java.util.UUID;
 
 public class MaterialControle {
     private static MaterialControle instancia;
@@ -36,5 +37,9 @@ public class MaterialControle {
 
     public void editarMaterial(MaterialVo material) {
         materialModelo.editarMaterial(material);
+    }
+
+    public MaterialVo getById(UUID id) {
+        return materialModelo.getById(id);
     }
 }

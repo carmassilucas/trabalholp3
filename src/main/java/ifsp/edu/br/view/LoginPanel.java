@@ -106,10 +106,10 @@ public class LoginPanel {
                 return pesquisarMateriaisPanel.getPanelConteudo();
             }
             case "Reciclagem" -> {
-                GerenciarMateriaisPanel gerenciarMateriaisPanel = GerenciarMateriaisPanel.getInstancia();
-                gerenciarMateriaisPanel.setIdReciclagem(((ReciclagemVo) autenticacaoRetorno).getId());
-                gerenciarMateriaisPanel.carregarTabelas();
-                return gerenciarMateriaisPanel.getPanelConteudo();
+                NegociarMateriaisPanel negociarMateriaisPanel = NegociarMateriaisPanel.getInstancia();
+                negociarMateriaisPanel.setIdReciclagem(((ReciclagemVo) autenticacaoRetorno).getId());
+                negociarMateriaisPanel.carregarTabelas();
+                return negociarMateriaisPanel.getPanelConteudo();
             }
             case "Administrador" -> {
                 ManterMaterialPanel manterMaterialPanel = ManterMaterialPanel.getInstancia();

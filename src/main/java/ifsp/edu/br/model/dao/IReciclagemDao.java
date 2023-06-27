@@ -1,6 +1,7 @@
 package ifsp.edu.br.model.dao;
 
 import ifsp.edu.br.model.dto.AutenticacaoDto;
+import ifsp.edu.br.model.dto.NegociarMaterialDto;
 import ifsp.edu.br.model.dto.PesquisarMateriaisDto;
 import ifsp.edu.br.model.dto.RelacionarMaterialReciclagemDto;
 import ifsp.edu.br.model.vo.MaterialReciclagemVo;
@@ -19,4 +20,5 @@ public interface IReciclagemDao {
     void editarPrecoMaterial(RelacionarMaterialReciclagemDto dto);
     List<PesquisarMateriaisDto> pesquisarMateriais(PesquisarMateriaisDto dto);
     ReciclagemVo buscarReciclagemByNome(String nomeReciclagem);
+    void negociar(NegociarMaterialDto dto);
 }

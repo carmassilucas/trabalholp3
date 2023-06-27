@@ -26,7 +26,7 @@ public class ClienteDao implements IClienteDao {
     }
 
     @Override
-    public ClienteVo cadastrarUsuario(ClienteVo cliente) {
+    public ClienteVo cadastrarCliente(ClienteVo cliente) {
         Connection conexao = ConexaoFactory.getConexao();
 
         try {
@@ -46,7 +46,7 @@ public class ClienteDao implements IClienteDao {
     }
 
     @Override
-    public ClienteVo buscarUsuarioByEmail(String email) {
+    public ClienteVo buscarClienteByEmail(String email) {
         Connection conexao = ConexaoFactory.getConexao();
 
         PreparedStatement preparedStatement = null;

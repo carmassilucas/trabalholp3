@@ -3,8 +3,10 @@ package ifsp.edu.br.control;
 import ifsp.edu.br.control.exception.CadastrarReciclagemException;
 import ifsp.edu.br.model.ReciclagemModelo;
 import ifsp.edu.br.model.dto.CadastrarReciclagemDto;
+import ifsp.edu.br.model.dto.NegociarMaterialDto;
 import ifsp.edu.br.model.dto.PesquisarMateriaisDto;
 import ifsp.edu.br.model.dto.RelacionarMaterialReciclagemDto;
+import ifsp.edu.br.model.exception.NegociarMaterialException;
 import ifsp.edu.br.model.exception.UsuarioDuplicadoException;
 import ifsp.edu.br.model.util.DtoUtils;
 import ifsp.edu.br.model.vo.MaterialReciclagemVo;
@@ -46,5 +48,9 @@ public class ReciclagemControle {
 
     public List<PesquisarMateriaisDto> pesquisarMateriais(PesquisarMateriaisDto dto) {
         return reciclagemModelo.pesquisarMateriais(dto);
+    }
+
+    public void negociar(NegociarMaterialDto dto) throws NegociarMaterialException {
+        reciclagemModelo.negociar(dto);
     }
 }

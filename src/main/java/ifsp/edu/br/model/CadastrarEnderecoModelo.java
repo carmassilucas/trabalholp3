@@ -20,6 +20,6 @@ public class CadastrarEnderecoModelo {
 
     public void cadastrarEndereco(CadastrarEnderecoDto cadastrarEnderecoDto) {
         EnderecoVo enderecoVo = enderecoDao.cadastrarEndereco(EnderecoVo.toVo(cadastrarEnderecoDto));
-        enderecoDao.relacionarClienteEndereco(cadastrarEnderecoDto.getIdUsuario(), enderecoVo.getId());
+        enderecoDao.relacionarClienteEndereco(cadastrarEnderecoDto.getIdCliente(), enderecoVo.getId());
     }
 }

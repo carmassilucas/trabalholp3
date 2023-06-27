@@ -1,11 +1,11 @@
 package ifsp.edu.br.model.vo;
 
-import ifsp.edu.br.model.dto.CadastrarClienteDto;
-import ifsp.edu.br.model.dto.CadastrarEnderecoDto;
-import ifsp.edu.br.model.dto.CadastrarReciclagemDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -18,40 +18,27 @@ public @Data class EnderecoVo {
         this.id = id;
     }
 
-    // TODO: refatorar métodos toVo
-    public static EnderecoVo toVo(CadastrarClienteDto cadastrarClienteDto) {
-        return new EnderecoVo(
-            UUID.randomUUID(),
-            cadastrarClienteDto.getCep().toString(),
-            cadastrarClienteDto.getLocalidade(),
-            cadastrarClienteDto.getLogradouro(),
-            cadastrarClienteDto.getBairro(),
-            cadastrarClienteDto.getEstado(),
-            Integer.parseInt(cadastrarClienteDto.getNumero())
-        );
-    }
+    public static EnderecoVo toVo(Object dto) {
+        try {
+            Map<String, Object> fieldValues = new HashMap<>();
+            Class<?> dtoClass = dto.getClass();
 
-    public static EnderecoVo toVo(CadastrarEnderecoDto cadastrarEnderecoDto) {
-        return new EnderecoVo(
-            UUID.randomUUID(),
-            cadastrarEnderecoDto.getCep().toString(),
-            cadastrarEnderecoDto.getLocalidade(),
-            cadastrarEnderecoDto.getLogradouro(),
-            cadastrarEnderecoDto.getBairro(),
-            cadastrarEnderecoDto.getEstado(),
-            Integer.parseInt(cadastrarEnderecoDto.getNumero())
-        );
-    }
+            for (Field field : dtoClass.getDeclaredFields()) {
+                field.setAccessible(true);
+                fieldValues.put(field.getName(), field.get(dto));
+            }
 
-    public static EnderecoVo toVo(CadastrarReciclagemDto cadastrarReciclagemDto) {
-        return new EnderecoVo(
-                UUID.randomUUID(),
-                cadastrarReciclagemDto.getCep().toString(),
-                cadastrarReciclagemDto.getLocalidade(),
-                cadastrarReciclagemDto.getLogradouro(),
-                cadastrarReciclagemDto.getBairro(),
-                cadastrarReciclagemDto.getEstado(),
-                Integer.parseInt(cadastrarReciclagemDto.getNumero())
-        );
+            return new EnderecoVo(
+                    UUID.randomUUID(),
+                    fieldValues.get("cep").toString(),
+                    fieldValues.get("localidade").toString(),
+                    fieldValues.get("logradouro").toString(),
+                    fieldValues.get("bairro").toString(),
+                    fieldValues.get("estado").toString(),
+                    Integer.parseInt(fieldValues.get("numero").toString())
+            );
+        } catch (IllegalAccessException | NullPointerException | NumberFormatException e) {
+            throw new IllegalArgumentException("Erro ao converter DTO em EnderecoVo", e);
+        }
     }
 }

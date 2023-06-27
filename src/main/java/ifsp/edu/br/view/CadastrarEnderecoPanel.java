@@ -29,7 +29,7 @@ public class CadastrarEnderecoPanel {
     private static CadastrarEnderecoPanel instancia;
     private final BuscarDadosCepControle buscarInformacoesCepControle;
     private final CadastrarEnderecoControle cadastrarEnderecoControle;
-    private UUID idUsuario;
+    private UUID idCliente;
 
     private CadastrarEnderecoPanel() {
         buscarInformacoesCepControle = BuscarDadosCepControle.getInstancia();
@@ -58,7 +58,7 @@ public class CadastrarEnderecoPanel {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
 
-                idUsuario = null;
+                idCliente = null;
                 JPanel panelConteudoProximaPagina = PesquisarMateriaisPanel.getInstancia().getPanelConteudo();
                 PesquisarMateriaisPanel.getInstancia().carregarComboBox();
                 GerenciadorDePaineis.getInstancia().setContentPane(panelConteudoProximaPagina);
@@ -76,8 +76,8 @@ public class CadastrarEnderecoPanel {
         return panelConteudo;
     }
 
-    public void setIdUsuario(UUID idUsuario) {
-        this.idUsuario = idUsuario;
+    public void setIdCliente(UUID idCliente) {
+        this.idCliente = idCliente;
     }
 
     private void createUIComponents() {
@@ -117,7 +117,7 @@ public class CadastrarEnderecoPanel {
     public void cadastrarEndereco() {
         try {
             cadastrarEnderecoControle.cadastrarEndereco(new CadastrarEnderecoDto(
-                    idUsuario,
+                    idCliente,
                     textFieldCidade.getText(),
                     textFieldLogradouro.getText(),
                     textFieldBairro.getText(),

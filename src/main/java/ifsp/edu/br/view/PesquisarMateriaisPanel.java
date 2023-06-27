@@ -92,7 +92,7 @@ public class PesquisarMateriaisPanel {
                 super.mouseClicked(e);
 
                 CadastrarEnderecoPanel cadastrarEnderecoPanel = CadastrarEnderecoPanel.getInstancia();
-                cadastrarEnderecoPanel.setIdUsuario(idCliente);
+                cadastrarEnderecoPanel.setIdCliente(idCliente);
                 JPanel panelConteudoProximaPagina = cadastrarEnderecoPanel.getPanelConteudo();
                 GerenciadorDePaineis.getInstancia().setContentPane(panelConteudoProximaPagina);
             }

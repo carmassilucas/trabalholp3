@@ -7,7 +7,7 @@ import java.util.UUID;
 
 @AllArgsConstructor
 public @Data class CadastrarEnderecoDto {
-    private UUID idUsuario;
+    private UUID idCliente;
     private String localidade, logradouro, bairro, estado, numero;
     private Object cep;
 }
